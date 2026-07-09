@@ -1,0 +1,6 @@
+{
+  "name": "DocuMind AI",
+  "description": "DocuMind AI is an enterprise-grade document intelligence platform that enables secure, page-wise PDF vectorization, semantic vector search, and real-time streaming Q&A utilizing Google Gemini 3.5 Flash, complete with advanced citation analytics, multi-user workspace containment, and comprehensive SaaS document metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
