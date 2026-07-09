@@ -125,8 +125,22 @@ class ApiService {
     }
 
     if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || `HTTP error ${res.status}`);
+      const text = await res.text().catch(() => '');
+      if (text.trim().startsWith('<')) {
+        throw new Error(
+          res.status === 502
+            ? 'Server is unavailable (502). The backend may be down or still starting.'
+            : `Server error (${res.status}). Please check that the backend is running.`
+        );
+      }
+      let message = `HTTP error ${res.status}`;
+      try {
+        const errData = JSON.parse(text);
+        message = errData.error || message;
+      } catch {
+        if (text) message = text;
+      }
+      throw new Error(message);
     }
 
     return res.json() as Promise<T>;
@@ -273,6 +287,14 @@ class ApiService {
       .then(async (response) => {
         if (!response.ok) {
           const errText = await response.text();
+          const isHtml = errText.trim().startsWith('<');
+          if (isHtml) {
+            throw new Error(
+              response.status === 502
+                ? 'Server is unavailable (502). The backend may be down or still starting. Please try again in a moment.'
+                : `Server error (${response.status}). Please check that the backend is running.`
+            );
+          }
           throw new Error(errText || `Server returned ${response.status}`);
         }
 

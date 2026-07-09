@@ -19,7 +19,7 @@ import { extractPageWiseText, chunkPageWiseText } from './server/pdf.ts';
 import { generateEmbeddings, buildRAGPrompt, getAI } from './server/openai.ts';
 import { User, DocumentRecord, TextChunk, VectorRecord, ChatSession, Message } from './src/types.ts';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET || 'chatpdf-access-secret-2026-key';
 const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || 'chatpdf-refresh-secret-2026-key';
 
@@ -62,6 +62,11 @@ async function startServer() {
   app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
+  });
+
+  // Health check for reverse proxies / deployment platforms
+  app.get('/api/health', (_req, res) => {
+    res.status(200).json({ status: 'ok', service: 'DocuMind AI' });
   });
 
   // ==========================================
