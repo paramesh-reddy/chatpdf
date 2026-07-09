@@ -5,6 +5,12 @@
       "email": "p@gmail.com",
       "passwordHash": "$2b$10$SWEj8V/qJsl5ZoDOOXJWfOGpA/2CDTbZ1gwWIMUBL.tnV5NXIurXa",
       "createdAt": "2026-07-09T06:02:32.371Z"
+    },
+    {
+      "id": "user-1783589164808-ndzxewb",
+      "email": "d@gmail.com",
+      "passwordHash": "$2b$10$RsJPbSg3gpJueFUtALclJOx18OHfKxfnPMRQ/Txj.9Yj8C7R1JU3S",
+      "createdAt": "2026-07-09T09:26:04.809Z"
     }
   ],
   "documents": [
@@ -18,6 +24,14 @@
       "tags": [
         "Research"
       ]
+    },
+    {
+      "id": "doc-1783589116970-21y5ba3",
+      "userId": "user-1783582580969-jk70zmb",
+      "name": "Resume.6.pdf",
+      "size": 58014,
+      "pageCount": 1,
+      "uploadedAt": "2026-07-09T09:25:18.221Z"
     }
   ],
   "chunks": [
@@ -31,6 +45,20 @@
     {
       "id": "doc-1783577761293-i1oiiky-chunk-1",
       "documentId": "doc-1783577761293-i1oiiky",
+      "text": "Built interactive and dynamic UI components with React.js and Material UI Uses API integration and asynchronous handling (fetch, axios) efficiently Collaborates with backend teams for end-to-end feature development Worked on fixing UI bugs and improving overall page speed for better user experience. Telugu Integrated third-party APIs, expanding application functionality. Developed scalable web applications, boosting user engagement by 30% Worked with authentication and authorization for secure user access. English Node.js Reac.js Next.js gurakaparameshwerreddy@gmail.com 8008879645 github.com/paramesh-reddy MongoDB GenAi Python Fast Api Sri Chaitanya Junior College Inter ---- Kurnool 2020 - 2022",
+      "pageNumber": 1,
+      "index": 1
+    },
+    {
+      "id": "doc-1783589116970-21y5ba3-chunk-0",
+      "documentId": "doc-1783589116970-21y5ba3",
+      "text": "Summary Work Experience Education SkillS Interest Parameshwar Reddy Full Stack Web Developer Full Stack Developer with proven experience in building scalable web applications and dynamic user experiences using modern technologies. Adept at managing both frontend and backend development, integrating APIs, and optimizing performance. Passionate about delivering clean, efficient code and innovative digital solutions. CSS Design Web Applications Jawaharlal Nehru Technological University College of Engineering Full Stack Developer --- Talent Spotify Frontend Developer --- Digiotai Languages Material.ui JavaScript Gaming Problem-solving puzzles or Chess TypeScript 2022 - 2026 May2025-sep2025 Jan2025-Apr2025 HTML B.Tech --- Pulivendula Implemented responsive designs, enhancing mobile user experience Built interactive and dynamic UI components with React.js and Material UI Uses API integration and asynchronous handling (fetch, axios) efficiently Collaborates with backend teams for end-to-end",
+      "pageNumber": 1,
+      "index": 0
+    },
+    {
+      "id": "doc-1783589116970-21y5ba3-chunk-1",
+      "documentId": "doc-1783589116970-21y5ba3",
       "text": "Built interactive and dynamic UI components with React.js and Material UI Uses API integration and asynchronous handling (fetch, axios) efficiently Collaborates with backend teams for end-to-end feature development Worked on fixing UI bugs and improving overall page speed for better user experience. Telugu Integrated third-party APIs, expanding application functionality. Developed scalable web applications, boosting user engagement by 30% Worked with authentication and authorization for secure user access. English Node.js Reac.js Next.js gurakaparameshwerreddy@gmail.com 8008879645 github.com/paramesh-reddy MongoDB GenAi Python Fast Api Sri Chaitanya Junior College Inter ---- Kurnool 2020 - 2022",
       "pageNumber": 1,
       "index": 1
@@ -71,6 +99,13 @@
       "documentId": "doc-1783577761293-i1oiiky",
       "title": "tell me about that ",
       "createdAt": "2026-07-09T06:22:40.576Z"
+    },
+    {
+      "id": "session-1783589123934-m6szka3",
+      "userId": "user-1783582580969-jk70zmb",
+      "documentId": "doc-1783589116970-21y5ba3",
+      "title": "Summarize this document in 3 b...",
+      "createdAt": "2026-07-09T09:25:23.934Z"
     }
   ],
   "messages": [
@@ -199,6 +234,42 @@
         1
       ],
       "confidenceScore": 28
+    },
+    {
+      "id": "msg-1783589123939-user",
+      "sessionId": "session-1783589123934-m6szka3",
+      "role": "user",
+      "content": "Summarize this document in 3 bullet points.",
+      "createdAt": "2026-07-09T09:25:23.939Z"
+    },
+    {
+      "id": "msg-1783589126447-assistant",
+      "sessionId": "session-1783589123934-m6szka3",
+      "role": "assistant",
+      "content": "- Parameshwar Reddy is a Full Stack Web Developer with expertise in building scalable web applications and dynamic user interfaces using technologies like React.js, Material UI, Node.js, and MongoDB, demonstrating a commitment to performance optimization and user engagement.\n\n- He has experience in API integration, asynchronous handling, and collaborating with backend teams for comprehensive feature development, alongside achievements in fixing UI bugs and improving page speed.\n\n- His educational background includes studying at Jawaharlal Nehru Technological University, and he is currently pursuing a B.Tech with a keen interest in gaming and problem-solving activities like puzzles and chess.",
+      "createdAt": "2026-07-09T09:25:26.447Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 33
+    },
+    {
+      "id": "msg-1783589131509-user",
+      "sessionId": "session-1783589123934-m6szka3",
+      "role": "user",
+      "content": "give me 2 points the about that pdf ",
+      "createdAt": "2026-07-09T09:25:31.509Z"
+    },
+    {
+      "id": "msg-1783589133891-assistant",
+      "sessionId": "session-1783589123934-m6szka3",
+      "role": "assistant",
+      "content": "1. Parameshwar Reddy is a Full Stack Web Developer who has experience in building scalable web applications and dynamic user interfaces using technologies such as React.js, Material UI, Node.js, and MongoDB, and he has successfully improved user engagement by 30% through optimized solutions [Source 1].\n\n2. He is currently pursuing a B.Tech at Jawaharlal Nehru Technological University, with interests that include gaming and problem-solving activities like puzzles and chess [Source 2].",
+      "createdAt": "2026-07-09T09:25:33.891Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 22
     }
   ]
 }
