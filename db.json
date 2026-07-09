@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "user-1783576952371-8hy4r02",
+      "email": "p@gmail.com",
+      "passwordHash": "$2b$10$SWEj8V/qJsl5ZoDOOXJWfOGpA/2CDTbZ1gwWIMUBL.tnV5NXIurXa",
+      "createdAt": "2026-07-09T06:02:32.371Z"
+    }
+  ],
+  "documents": [],
+  "chunks": [],
+  "chatSessions": [],
+  "messages": []
+}
