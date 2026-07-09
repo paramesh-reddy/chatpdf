@@ -12,9 +12,20 @@ class ApiService {
   private static refreshToken: string | null = localStorage.getItem('refresh_token');
   private static userEmail: string | null = localStorage.getItem('user_email');
   private static userId: string | null = localStorage.getItem('user_id');
+  private static userDisplayName: string | null = localStorage.getItem('user_display_name');
 
   public static getEmail(): string | null {
     return this.userEmail;
+  }
+
+  public static getDisplayName(): string | null {
+    return this.userDisplayName;
+  }
+
+  public static setDisplayName(name: string | null) {
+    this.userDisplayName = name;
+    if (name) localStorage.setItem('user_display_name', name);
+    else localStorage.removeItem('user_display_name');
   }
 
   public static getUserId(): string | null {
@@ -30,11 +41,17 @@ class ApiService {
     this.refreshToken = auth.refreshToken;
     this.userEmail = auth.user.email;
     this.userId = auth.user.id;
+    this.userDisplayName = auth.user.displayName || null;
 
     localStorage.setItem('access_token', auth.accessToken);
     localStorage.setItem('refresh_token', auth.refreshToken);
     localStorage.setItem('user_email', auth.user.email);
     localStorage.setItem('user_id', auth.user.id);
+    if (auth.user.displayName) {
+      localStorage.setItem('user_display_name', auth.user.displayName);
+    } else {
+      localStorage.removeItem('user_display_name');
+    }
   }
 
   public static clearTokens() {
@@ -42,11 +59,13 @@ class ApiService {
     this.refreshToken = null;
     this.userEmail = null;
     this.userId = null;
+    this.userDisplayName = null;
 
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user_email');
     localStorage.removeItem('user_id');
+    localStorage.removeItem('user_display_name');
   }
 
   private static async request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -114,10 +133,10 @@ class ApiService {
   }
 
   // --- AUTH ---
-  public static async register(email: string, password: string): Promise<AuthResponse> {
+  public static async register(email: string, password: string, displayName?: string): Promise<AuthResponse> {
     const data = await this.request<AuthResponse>('/api/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, displayName }),
     });
     this.setTokens(data);
     return data;
@@ -142,7 +161,7 @@ class ApiService {
     }
   }
 
-  public static async getProfile(): Promise<{ user: { id: string; email: string } }> {
+  public static async getProfile(): Promise<{ user: { id: string; email: string; displayName?: string } }> {
     return this.request('/api/auth/me', { method: 'GET' });
   }
 
@@ -207,14 +226,21 @@ class ApiService {
    */
   public static streamChat(
     params: {
-      documentId: string;
+      documentId?: string;
+      documentIds?: string[];
       sessionId?: string;
       question: string;
     },
     callbacks: {
       onChunk: (text: string) => void;
       onSessionCreated?: (session: { sessionId: string; title: string }) => void;
-      onDone: (meta: { source_pages: number[]; confidence_score: number; sessionId: string }) => void;
+      onDone: (meta: {
+        source_pages: number[];
+        source_documents?: { documentId: string; documentName: string; pageNumber: number }[];
+        confidence_score: number;
+        sessionId: string;
+        answer?: string;
+      }) => void;
       onError: (err: string) => void;
     }
   ) {
@@ -225,9 +251,15 @@ class ApiService {
 
     const urlParams = new URLSearchParams({
       token: this.accessToken,
-      documentId: params.documentId,
       question: params.question,
     });
+
+    if (params.documentIds && params.documentIds.length > 0) {
+      urlParams.append('documentIds', params.documentIds.join(','));
+      urlParams.append('documentId', params.documentIds[0]);
+    } else if (params.documentId) {
+      urlParams.append('documentId', params.documentId);
+    }
 
     if (params.sessionId) {
       urlParams.append('sessionId', params.sessionId);
@@ -251,6 +283,8 @@ class ApiService {
         }
 
         let buffer = '';
+        let accumulatedText = '';
+        let currentEvent = 'message';
 
         while (true) {
           const { done, value } = await reader.read();
@@ -258,13 +292,14 @@ class ApiService {
 
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
-          buffer = lines.pop() || ''; // keep incomplete line in buffer
-
-          let currentEvent = 'message';
+          buffer = lines.pop() || '';
 
           for (const line of lines) {
             const trimmed = line.trim();
-            if (!trimmed) continue;
+            if (!trimmed) {
+              currentEvent = 'message';
+              continue;
+            }
 
             if (trimmed.startsWith('event:')) {
               currentEvent = trimmed.replace('event:', '').trim();
@@ -276,20 +311,19 @@ class ApiService {
                 if (currentEvent === 'session_created') {
                   if (callbacks.onSessionCreated) callbacks.onSessionCreated(data);
                 } else if (currentEvent === 'done') {
-                  callbacks.onDone(data);
+                  callbacks.onDone({
+                    ...data,
+                    answer: data.answer || accumulatedText,
+                  });
                 } else if (currentEvent === 'error') {
                   callbacks.onError(data.error || 'Streaming error');
-                } else {
-                  // regular text chunk
-                  if (data.text) {
-                    callbacks.onChunk(data.text);
-                  }
+                } else if (data.text) {
+                  accumulatedText += data.text;
+                  callbacks.onChunk(data.text);
                 }
               } catch (e) {
                 console.error('SSE JSON parsing error on line:', trimmed, e);
               }
-              // Reset event back to message default
-              currentEvent = 'message';
             }
           }
         }

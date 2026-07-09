@@ -7,6 +7,7 @@ export interface User {
   id: string;
   email: string;
   passwordHash: string;
+  displayName?: string;
   createdAt: string;
 }
 
@@ -41,15 +42,22 @@ export interface TextChunk {
 export interface VectorRecord {
   chunkId: string;
   documentId: string;
-  values: number[]; // The embedding vector values (768 dimensions for Gemini Embeddings)
+  values: number[]; // OpenAI text-embedding-3-small (1536 dimensions)
 }
 
 export interface ChatSession {
   id: string;
   userId: string;
   documentId: string;
+  documentIds?: string[];
   title: string;
   createdAt: string;
+}
+
+export interface SourceCitation {
+  documentId: string;
+  documentName: string;
+  pageNumber: number;
 }
 
 export interface Message {
@@ -59,6 +67,7 @@ export interface Message {
   content: string;
   createdAt: string;
   sourcePages?: number[];
+  sourceDocuments?: SourceCitation[];
   confidenceScore?: number;
 }
 
@@ -66,6 +75,7 @@ export interface AuthResponse {
   user: {
     id: string;
     email: string;
+    displayName?: string;
   };
   accessToken: string;
   refreshToken: string;

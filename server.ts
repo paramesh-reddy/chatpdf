@@ -16,7 +16,7 @@ import OpenAI from 'openai';
 
 import { Database } from './server/db.ts';
 import { extractPageWiseText, chunkPageWiseText } from './server/pdf.ts';
-import { generateEmbeddings, buildRAGPrompt, getAI } from './server/gemini.ts';
+import { generateEmbeddings, buildRAGPrompt, getAI } from './server/openai.ts';
 import { User, DocumentRecord, TextChunk, VectorRecord, ChatSession, Message } from './src/types.ts';
 
 const PORT = 3000;
@@ -71,7 +71,7 @@ async function startServer() {
   // Register
   app.post('/api/auth/register', async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, password } = req.body;
+      const { email, password, displayName } = req.body;
       if (!email || !password) {
         res.status(400).json({ error: 'Email and password are required' });
         return;
@@ -91,6 +91,7 @@ async function startServer() {
         id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         email,
         passwordHash,
+        displayName: displayName?.trim() || undefined,
         createdAt: new Date().toISOString(),
       };
 
@@ -109,7 +110,7 @@ async function startServer() {
       );
 
       res.status(201).json({
-        user: { id: newUser.id, email: newUser.email },
+        user: { id: newUser.id, email: newUser.email, displayName: newUser.displayName },
         accessToken,
         refreshToken,
       });
@@ -153,7 +154,7 @@ async function startServer() {
       );
 
       res.status(200).json({
-        user: { id: user.id, email: user.email },
+        user: { id: user.id, email: user.email, displayName: user.displayName },
         accessToken,
         refreshToken,
       });
@@ -202,7 +203,14 @@ async function startServer() {
 
   // Get current user profile
   app.get('/api/auth/me', authenticateToken, (req: AuthenticatedRequest, res: Response): void => {
-    res.status(200).json({ user: req.user });
+    const user = Database.getUserById(req.user!.id);
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    res.status(200).json({
+      user: { id: user.id, email: user.email, displayName: user.displayName },
+    });
   });
 
   // ==========================================
@@ -285,8 +293,8 @@ async function startServer() {
       const chunks = chunkPageWiseText(pages, documentId);
       console.log(`[Upload] Extracted ${pageCount} pages and split into ${chunks.length} chunks.`);
 
-      // 3. Generate Embeddings using Gemini Embedding API in batched calls
-      console.log(`[Upload] Requesting embeddings for ${chunks.length} chunks from Gemini API...`);
+      // 3. Generate embeddings via OpenAI in batched calls
+      console.log(`[Upload] Requesting embeddings for ${chunks.length} chunks from OpenAI...`);
       const embeddingVectors = await generateEmbeddings(chunks.map(c => c.text));
 
       // 4. Map embedding values to chunks and prepare vector records
@@ -304,6 +312,7 @@ async function startServer() {
         size: fileSize,
         pageCount,
         uploadedAt: new Date().toISOString(),
+        tags: [/resume/i.test(fileName) ? 'Resumes' : 'Uncategorized'],
       };
 
       Database.createDocument(docRecord, chunks, vectors);
@@ -439,56 +448,65 @@ async function startServer() {
   // 4. CHAT RAG SSE STREAMING ENDPOINT
   // ==========================================
   app.get('/api/chat/stream', async (req: Request, res: Response): Promise<void> => {
-    // SSE parameters can be passed in query string for easy client-side EventSource/fetch streaming setup
     const token = req.query.token as string;
     const documentId = req.query.documentId as string;
+    const documentIdsParam = req.query.documentIds as string | undefined;
     const sessionId = req.query.sessionId as string;
     const question = req.query.question as string;
 
-    if (!token || !documentId || !question) {
-      res.status(400).json({ error: 'token, documentId, and question parameters are required.' });
+    if (!token || !question) {
+      res.status(400).json({ error: 'token and question parameters are required.' });
+      return;
+    }
+
+    if (!documentId && !documentIdsParam) {
+      res.status(400).json({ error: 'documentId or documentIds parameter is required.' });
       return;
     }
 
     let userId = '';
-    let email = '';
 
     try {
-      // 1. Authenticate JWT token
       const decoded: any = jwt.verify(token, ACCESS_TOKEN_SECRET);
       userId = decoded.userId;
-      email = decoded.email;
     } catch (err) {
       res.status(401).json({ error: 'Invalid or expired token' });
       return;
     }
 
-    // Verify document ownership
-    const docRecord = Database.getDocument(documentId);
-    if (!docRecord || docRecord.userId !== userId) {
+    const targetDocumentIds = documentIdsParam
+      ? documentIdsParam.split(',').map(id => id.trim()).filter(Boolean)
+      : [documentId];
+
+    const ownedDocs = targetDocumentIds
+      .map(id => Database.getDocument(id))
+      .filter((doc): doc is DocumentRecord => !!doc && doc.userId === userId);
+
+    if (ownedDocs.length === 0) {
       res.status(403).json({ error: 'Document access forbidden.' });
       return;
     }
 
-    // Prepare SSE connection headers
+    const ownedDocIds = ownedDocs.map(d => d.id);
+    const isMultiDocument = ownedDocIds.length > 1;
+    const primaryDocumentId = ownedDocIds[0];
+
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
     try {
-      // 2. Generate embedding for query
       const queryEmbeddings = await generateEmbeddings([question]);
       const queryVector = queryEmbeddings[0];
 
-      // 3. Search ChromaDB equivalent local index for top 5 relevant chunks
-      const searchResults = Database.searchSimilarChunks(documentId, queryVector, 5);
-      
+      const searchResults = Database.searchSimilarChunksAcrossDocuments(ownedDocIds, queryVector, 8);
+
       if (searchResults.length === 0) {
-        // Send a direct response indicating no context
-        res.write(`data: ${JSON.stringify({ text: "No relevant content found in the document to answer this question." })}\n\n`);
+        res.write(`data: ${JSON.stringify({ text: "No relevant content found in the selected documents to answer this question." })}\n\n`);
         const finalMeta = {
           source_pages: [],
+          source_documents: [],
           confidence_score: 0,
           sessionId: sessionId || '',
         };
@@ -499,23 +517,32 @@ async function startServer() {
 
       const topChunks = searchResults.map(r => r.chunk);
       const sourcePages = Array.from(new Set(topChunks.map(c => c.pageNumber))).sort((a, b) => a - b);
-      
-      // Calculate confidence score based on the highest matches' similarity values
+      const sourceDocuments = searchResults.map(r => ({
+        documentId: r.chunk.documentId,
+        documentName: r.documentName,
+        pageNumber: r.chunk.pageNumber,
+      }));
+
       const avgSimilarity = searchResults.reduce((sum, r) => sum + r.similarity, 0) / searchResults.length;
-      // Convert typical 0.5-0.9 cosine similarity values into a user-friendly 0-100% confidence scale
       const confidenceScore = Math.min(100, Math.max(10, Math.round(avgSimilarity * 100 + 10)));
 
-      // 4. Build system/RAG prompt
-      const prompt = buildRAGPrompt(question, topChunks.map(c => ({ text: c.text, pageNumber: c.pageNumber })));
+      const prompt = buildRAGPrompt(
+        question,
+        searchResults.map(r => ({
+          text: r.chunk.text,
+          pageNumber: r.chunk.pageNumber,
+          documentName: r.documentName,
+        })),
+        isMultiDocument
+      );
 
-      // 5. Gather chat history if session is active
       let targetSessionId = sessionId;
       const conversationMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [];
 
       if (targetSessionId) {
         const session = Database.getChatSession(targetSessionId);
         if (session && session.userId === userId) {
-          const pastMessages = Database.getMessages(targetSessionId).slice(-10); // last 10 messages for context
+          const pastMessages = Database.getMessages(targetSessionId).slice(-10);
           for (const msg of pastMessages) {
             conversationMessages.push({
               role: msg.role === 'user' ? 'user' : 'assistant',
@@ -524,28 +551,25 @@ async function startServer() {
           }
         }
       } else {
-        // Automatically create a new session if none was provided
         targetSessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
         const shortTitle = question.length > 30 ? question.substring(0, 30) + '...' : question;
         Database.createChatSession({
           id: targetSessionId,
           userId,
-          documentId,
+          documentId: isMultiDocument ? 'workspace' : primaryDocumentId,
+          documentIds: isMultiDocument ? ownedDocIds : undefined,
           title: shortTitle,
           createdAt: new Date().toISOString(),
         });
 
-        // Notify client of the newly created session id immediately
         res.write(`event: session_created\ndata: ${JSON.stringify({ sessionId: targetSessionId, title: shortTitle })}\n\n`);
       }
 
-      // Append current context and prompt
       conversationMessages.push({
         role: 'user',
         content: prompt,
       });
 
-      // Save user question message
       const userMessage: Message = {
         id: `msg-${Date.now()}-user`,
         sessionId: targetSessionId,
@@ -555,8 +579,7 @@ async function startServer() {
       };
       Database.createMessage(userMessage);
 
-      // 6. Call OpenAI GPT-4 Streaming API
-      console.log(`[RAG Stream] Querying OpenAI model for response on session ${targetSessionId}...`);
+      console.log(`[RAG Stream] Querying OpenAI across ${ownedDocIds.length} document(s) on session ${targetSessionId}...`);
       const client = getAI();
       const stream = await client.chat.completions.create({
         model: 'gpt-4o-mini',
@@ -569,11 +592,13 @@ async function startServer() {
       for await (const chunk of stream) {
         const chunkText = chunk.choices[0]?.delta?.content || '';
         fullAnswerText += chunkText;
-        // Stream text chunk as an SSE event
         res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
       }
 
-      // Save assistant answer message
+      const uniqueSourceDocuments = Array.from(
+        new Map(sourceDocuments.map(s => [`${s.documentId}-${s.pageNumber}`, s])).values()
+      );
+
       const assistantMessage: Message = {
         id: `msg-${Date.now()}-assistant`,
         sessionId: targetSessionId,
@@ -581,15 +606,17 @@ async function startServer() {
         content: fullAnswerText,
         createdAt: new Date().toISOString(),
         sourcePages,
+        sourceDocuments: uniqueSourceDocuments,
         confidenceScore,
       };
       Database.createMessage(assistantMessage);
 
-      // 7. Send final "done" event with source citations and score
       const doneMeta = {
         source_pages: sourcePages,
+        source_documents: uniqueSourceDocuments,
         confidence_score: confidenceScore,
         sessionId: targetSessionId,
+        answer: fullAnswerText,
       };
       res.write(`event: done\ndata: ${JSON.stringify(doneMeta)}\n\n`);
       res.end();
@@ -618,7 +645,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[Server] Full-stack ChatPDF listening on port ${PORT}`);
+    console.log(`[Server] DocuMind AI listening on port ${PORT}`);
     console.log(`[Server] Running in ${process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'DEVELOPMENT'} mode`);
   });
 }

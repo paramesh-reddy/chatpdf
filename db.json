@@ -10,7 +10,20 @@
       "id": "user-1783589164808-ndzxewb",
       "email": "d@gmail.com",
       "passwordHash": "$2b$10$RsJPbSg3gpJueFUtALclJOx18OHfKxfnPMRQ/Txj.9Yj8C7R1JU3S",
+      "displayName": "Parameshwar",
       "createdAt": "2026-07-09T09:26:04.809Z"
+    },
+    {
+      "id": "user-1783621318837-0zs3qfb",
+      "email": "e2e@test.com",
+      "passwordHash": "$2b$10$ck.Q7Yu6Qb9eqJ3XS6utne.GJFz5b4F09wGNq.sYh/UtSwKCkrUbe",
+      "createdAt": "2026-07-09T18:21:58.837Z"
+    },
+    {
+      "id": "user-1783628317124-3gkwyig",
+      "email": "Paramesh@gmail.com",
+      "passwordHash": "$2b$10$AzBRtOSL2CmQMBNvlp/0vesZYv0JTrXBeBijQhn31SKohEoiUckg2",
+      "createdAt": "2026-07-09T20:18:37.127Z"
     }
   ],
   "documents": [
@@ -32,6 +45,36 @@
       "size": 58014,
       "pageCount": 1,
       "uploadedAt": "2026-07-09T09:25:18.221Z"
+    },
+    {
+      "id": "doc-1783621355596-tpwlcly",
+      "userId": "user-1783621318837-0zs3qfb",
+      "name": "e2e-test.pdf",
+      "size": 560,
+      "pageCount": 1,
+      "uploadedAt": "2026-07-09T18:22:38.418Z"
+    },
+    {
+      "id": "doc-1783621674531-naf81nh",
+      "userId": "user-1783589164808-ndzxewb",
+      "name": "thota_harshavardhan_reddy_resume.pdf",
+      "size": 174299,
+      "pageCount": 1,
+      "uploadedAt": "2026-07-09T18:27:56.582Z",
+      "tags": [
+        "Resumes"
+      ]
+    },
+    {
+      "id": "doc-1783622505807-8h6rcg7",
+      "userId": "user-1783589164808-ndzxewb",
+      "name": "Paramesh_resume_0.2.pdf",
+      "size": 100401,
+      "pageCount": 1,
+      "uploadedAt": "2026-07-09T18:41:47.193Z",
+      "tags": [
+        "Resumes"
+      ]
     }
   ],
   "chunks": [
@@ -62,6 +105,69 @@
       "text": "Built interactive and dynamic UI components with React.js and Material UI Uses API integration and asynchronous handling (fetch, axios) efficiently Collaborates with backend teams for end-to-end feature development Worked on fixing UI bugs and improving overall page speed for better user experience. Telugu Integrated third-party APIs, expanding application functionality. Developed scalable web applications, boosting user engagement by 30% Worked with authentication and authorization for secure user access. English Node.js Reac.js Next.js gurakaparameshwerreddy@gmail.com 8008879645 github.com/paramesh-reddy MongoDB GenAi Python Fast Api Sri Chaitanya Junior College Inter ---- Kurnool 2020 - 2022",
       "pageNumber": 1,
       "index": 1
+    },
+    {
+      "id": "doc-1783621355596-tpwlcly-chunk-0",
+      "documentId": "doc-1783621355596-tpwlcly",
+      "text": "ChatPDF end-to-end test document.",
+      "pageNumber": 1,
+      "index": 0
+    },
+    {
+      "id": "doc-1783621674531-naf81nh-chunk-0",
+      "documentId": "doc-1783621674531-naf81nh",
+      "text": "THOTA HARSHAVARDHAN REDDY 7396683427 | thotaharshareddy@gmail.com | https://linkedin.com/in/thotaharshavardhanreddy | https://github.com/Harshareddy3391 PROFESSIONAL SUMMARY Python Full Stack Developer with hands-on experience in FastAPI, React.js, Python, JavaScript, MySQL, PostgreSQL, and Generative AI applications. Skilled in RESTful API development, frontend-backend integration, JWT authentication, responsive UI design, API testing, debugging, and scalable application development using OpenAI and Gemini APIs. TECHNICAL SKILLS • Frontend: HTML, CSS, JavaScript, React.js, Responsive Design • Backend: Python, FastAPI, REST APIs Development • Database: MySQL • Generative AI: OpenAI API, Gemini API, Prompt Engineering, LLM Integration • Familiar: Jira, Machine Learning, Deep Learning, Networking, PostgreSQL, MongoDB, Canva • Tools: Git, GitHub, Postman, VS Code, Vercel, Render • Languages: English, Telugu, Kannada, Hindi(Basics) WORK EXPERIENCE SmartInternz | Frontend Developer Intern",
+      "pageNumber": 1,
+      "index": 0
+    },
+    {
+      "id": "doc-1783621674531-naf81nh-chunk-1",
+      "documentId": "doc-1783621674531-naf81nh",
+      "text": "PostgreSQL, MongoDB, Canva • Tools: Git, GitHub, Postman, VS Code, Vercel, Render • Languages: English, Telugu, Kannada, Hindi(Basics) WORK EXPERIENCE SmartInternz | Frontend Developer Intern Feb 2025 - Jun 2025 • Developed 10+ reusable React.js UI components used across multiple application modules, reducing repetitive frontend development effort by 30%. • Integrated 5+ RESTful API endpoints with frontend applications, improving backend communication and data handling efficiency. • Improved mobile responsiveness and cross-browser compatibility across major devices, enhancing application usability and performance. • Collaborated in debugging and frontend feature implementation, reducing UI-related issues during testing cycles. PROJECTS Task Management API System | github.com/Harshareddy3391/task_manager • Developed a scalable Task Management REST API using FastAPI, SQLAlchemy, and MySQL for task management operations. • Implemented CRUD operations and optimized database queries,",
+      "pageNumber": 1,
+      "index": 1
+    },
+    {
+      "id": "doc-1783621674531-naf81nh-chunk-2",
+      "documentId": "doc-1783621674531-naf81nh",
+      "text": "• Developed a scalable Task Management REST API using FastAPI, SQLAlchemy, and MySQL for task management operations. • Implemented CRUD operations and optimized database queries, improving backend response handling and performance. • Tested APIs using Postman and designed modular backend architecture for scalability and maintainability. AI Chatbot Using OpenAI & Gemini APIs | github.com/Harshareddy3391/gen-ai-chat-boat • Built a Generative AI chatbot using React.js, FastAPI, and Python with real-time LLM interaction. • Integrated OpenAI and Gemini APIs for conversational response generation and optimized API request handling. • Implemented secure API key management and API documentation using Swagger UI and Postman. EDUCATION Gates Institute of Technology 2023 - 2026 B.Tech, Computer Science Engineering (GPA: 7.0) M.J.R College of Engineering & Technology 2020 - 2023 Diploma, Mechanical Engineering (GPA: 7.0) CERTIFICATIONS • MERN Stack Development Certification •AI & Machine Learning",
+      "pageNumber": 1,
+      "index": 2
+    },
+    {
+      "id": "doc-1783621674531-naf81nh-chunk-3",
+      "documentId": "doc-1783621674531-naf81nh",
+      "text": "Engineering (GPA: 7.0) M.J.R College of Engineering & Technology 2020 - 2023 Diploma, Mechanical Engineering (GPA: 7.0) CERTIFICATIONS • MERN Stack Development Certification •AI & Machine Learning Certification",
+      "pageNumber": 1,
+      "index": 3
+    },
+    {
+      "id": "doc-1783622505807-8h6rcg7-chunk-0",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "text": "PARAMESHWAR REDDY GURAKA 8008879645 | gurakaparameshreddy@gmail.com | Linkedin | Github | Portfolio PROFESSIONAL SUMMARY Full Stack Developer with 1+ year of experience designing and building scalable web applications and AI-powered solutions using Python, FastAPI, React.js, Node.js, and JavaScript. Proficient in REST API Development, JWT Authentication, LangChain-based RAG Pipelines, and reusable frontend component design. Passionate about Generative AI, Agentic AI workflows, and modern full-stack development. SKILLS • Languages: HTML5, CSS3, JavaScript, Python, SQL • Frontend Technologies: React.js, Next.js, HTML5, CSS3, Bootstrap, Material UI, Tailwind CSS • Backend Technologies: FastAPI, Node.js, Express.js, RESTful API Development, JWT Authentication, Role-Based Authorization • Databases: PostgreSQL, MongoDB, SQL, Vector Database (FAISS) • Generative AI & AI Frameworks: Large Language Models (LLMs), LangChain, Retrieval-Augmented Generation (RAG), Prompt Engineering, Agentic AI,",
+      "pageNumber": 1,
+      "index": 0
+    },
+    {
+      "id": "doc-1783622505807-8h6rcg7-chunk-1",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "text": "PostgreSQL, MongoDB, SQL, Vector Database (FAISS) • Generative AI & AI Frameworks: Large Language Models (LLMs), LangChain, Retrieval-Augmented Generation (RAG), Prompt Engineering, Agentic AI, LangGraph, OpenAI API, Chroma WORK EXPERIENCE Talent Spotify May 2025 - Dec 2025 Full Stack Developer Intern Bangalore, India (Remote) • Engineered scalable RESTful web applications using Python and FastAPI, contributing to a 30% increase in user engagement through optimized backend performance. • Integrated 5+ third-party APIs using Node.js and Express.js, reducing development and API integration time by 40%. • Implemented JWT-based authentication and role-based access control (RBAC) in FastAPI for 1,000+ users, eliminating unauthorized access incidents. Digiotai Jan 2025 - Apr 2025 Frontend Developer Intern Bangalore, India (Remote) • Designed and optimized 15+ reusable UI components using React.js, Next.js, and Material UI, increasing user satisfaction scores by 25%. • Identified and resolved",
+      "pageNumber": 1,
+      "index": 1
+    },
+    {
+      "id": "doc-1783622505807-8h6rcg7-chunk-2",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "text": "Intern Bangalore, India (Remote) • Designed and optimized 15+ reusable UI components using React.js, Next.js, and Material UI, increasing user satisfaction scores by 25%. • Identified and resolved 30+ UI bugs through systematic debugging and code optimization, reducing page load time by 35%. PROJECTS AI-Powered Financial Report Summarizer & Q&A • Developed a financial report analysis system using RAG pipeline to process PDF/Excel reports and respond to natural language queries. • Reduced time to extract key FP&A insights by ~70% during user testing, significantly improving analyst efficiency. • Technologies: Python, FastAPI, LangChain, FAISS, RAG, PDF Processing, REST APIs AI Chatbot Application • Built an end-to-end AI chatbot using Python, LangChain, LangGraph, FAISS Vector Database, and RAG architecture. • Achieved 90%+ answer accuracy through optimized LLM prompt engineering and contextual retrieval workflows. • Technologies: Python, FastAPI, LangChain, FAISS, RAG, LangGraph, REST",
+      "pageNumber": 1,
+      "index": 2
+    },
+    {
+      "id": "doc-1783622505807-8h6rcg7-chunk-3",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "text": "RAG architecture. • Achieved 90%+ answer accuracy through optimized LLM prompt engineering and contextual retrieval workflows. • Technologies: Python, FastAPI, LangChain, FAISS, RAG, LangGraph, REST APIs Mini E-Commerce Store (UniCart) • Built a responsive e-commerce web application with React.js featuring product browsing, shopping cart, checkout, and order management. • Delivered seamless cross-device experience for 50+ test users across desktop and mobile with fully responsive design. • Technologies: React.js, JavaScript, HTML5, CSS3, Bootstrap, Material UI, Responsive Design EDUCATION JNTU | B.Tech in Mechanical Engineering (GPA: 8.2/10) pulivendula 2022 - 2026 Sri Chaitanya Junior College, Kurnool | Intermediate (MPC), MPC Kurnool 2020 - 2022 CERTIFICATIONS • Python Full Stack Web Development + Generative AI: ProStack Academy (2026)",
+      "pageNumber": 1,
+      "index": 3
     }
   ],
   "chatSessions": [
@@ -106,6 +212,111 @@
       "documentId": "doc-1783589116970-21y5ba3",
       "title": "Summarize this document in 3 b...",
       "createdAt": "2026-07-09T09:25:23.934Z"
+    },
+    {
+      "id": "session-1783621358744-d51hvu2",
+      "userId": "user-1783621318837-0zs3qfb",
+      "documentId": "doc-1783621355596-tpwlcly",
+      "title": "What is this document about?",
+      "createdAt": "2026-07-09T18:22:38.744Z"
+    },
+    {
+      "id": "session-1783621362543-c1hs86h",
+      "userId": "user-1783621318837-0zs3qfb",
+      "documentId": "doc-1783621355596-tpwlcly",
+      "title": "What is this document about?",
+      "createdAt": "2026-07-09T18:22:42.543Z"
+    },
+    {
+      "id": "session-1783621696393-sjr5ltx",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783621674531-naf81nh",
+      "title": "give me 2 points the about tha...",
+      "createdAt": "2026-07-09T18:28:16.393Z"
+    },
+    {
+      "id": "session-1783621733303-4vaii0x",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783621674531-naf81nh",
+      "title": "Summarize this document in 3 b...",
+      "createdAt": "2026-07-09T18:28:53.303Z"
+    },
+    {
+      "id": "session-1783621813995-ptta5sc",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783621674531-naf81nh",
+      "title": "Summarize this document in 3 b...",
+      "createdAt": "2026-07-09T18:30:13.995Z"
+    },
+    {
+      "id": "session-1783621875108-zvjhuz9",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783621674531-naf81nh",
+      "title": "Summarize this document in 3 b...",
+      "createdAt": "2026-07-09T18:31:15.108Z"
+    },
+    {
+      "id": "session-1783622062311-ncosw6q",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783621674531-naf81nh",
+      "title": "Summarize this document in 3 b...",
+      "createdAt": "2026-07-09T18:34:22.311Z"
+    },
+    {
+      "id": "session-1783622526865-4pyadhf",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "title": "i am uploading the two documet...",
+      "createdAt": "2026-07-09T18:42:06.865Z"
+    },
+    {
+      "id": "session-1783623059915-3u1nhsg",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "title": "which resuem is good  like bas...",
+      "createdAt": "2026-07-09T18:50:59.916Z"
+    },
+    {
+      "id": "session-1783623139758-921g11u",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "title": "which resume is good ",
+      "createdAt": "2026-07-09T18:52:19.758Z"
+    },
+    {
+      "id": "session-1783625068796-wtmibj8",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "title": "Summarize this document",
+      "createdAt": "2026-07-09T19:24:28.796Z"
+    },
+    {
+      "id": "session-1783625531720-502xbrr",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783621674531-naf81nh",
+      "title": "giv eme two bullet points",
+      "createdAt": "2026-07-09T19:32:11.720Z"
+    },
+    {
+      "id": "session-1783625619054-xf5m5g5",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "title": "Summarize this document in bul...",
+      "createdAt": "2026-07-09T19:33:39.054Z"
+    },
+    {
+      "id": "session-1783626228709-2wj4o6s",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783622505807-8h6rcg7",
+      "title": "Summarize this document in bul...",
+      "createdAt": "2026-07-09T19:43:48.709Z"
+    },
+    {
+      "id": "session-1783627113090-cz2bz6y",
+      "userId": "user-1783589164808-ndzxewb",
+      "documentId": "doc-1783621674531-naf81nh",
+      "title": "Summarize this document in bul...",
+      "createdAt": "2026-07-09T19:58:33.090Z"
     }
   ],
   "messages": [
@@ -270,6 +481,402 @@
         1
       ],
       "confidenceScore": 22
+    },
+    {
+      "id": "msg-1783621358755-user",
+      "sessionId": "session-1783621358744-d51hvu2",
+      "role": "user",
+      "content": "What is this document about?",
+      "createdAt": "2026-07-09T18:22:38.755Z"
+    },
+    {
+      "id": "msg-1783621360167-assistant",
+      "sessionId": "session-1783621358744-d51hvu2",
+      "role": "assistant",
+      "content": "The document is about an end-to-end test for ChatPDF [Source 1 (Page 1)].",
+      "createdAt": "2026-07-09T18:22:40.167Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 49
+    },
+    {
+      "id": "msg-1783621362544-user",
+      "sessionId": "session-1783621362543-c1hs86h",
+      "role": "user",
+      "content": "What is this document about?",
+      "createdAt": "2026-07-09T18:22:42.544Z"
+    },
+    {
+      "id": "msg-1783621363573-assistant",
+      "sessionId": "session-1783621362543-c1hs86h",
+      "role": "assistant",
+      "content": "This document is about the \"ChatPDF end-to-end test.\" [Source 1] (Page 1)",
+      "createdAt": "2026-07-09T18:22:43.573Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 49
+    },
+    {
+      "id": "msg-1783621696403-user",
+      "sessionId": "session-1783621696393-sjr5ltx",
+      "role": "user",
+      "content": "give me 2 points the about that pdf ",
+      "createdAt": "2026-07-09T18:28:16.403Z"
+    },
+    {
+      "id": "msg-1783621698125-assistant",
+      "sessionId": "session-1783621696393-sjr5ltx",
+      "role": "assistant",
+      "content": "1. The document highlights the professional qualifications of Thota Harshavardhan Reddy, who is a Python Full Stack Developer with experience in technologies such as FastAPI, React.js, and Generative AI applications [Source 2].\n\n2. It also details his educational background, including a current B.Tech in Computer Science Engineering and a Diploma in Mechanical Engineering, both with a GPA of 7.0 [Source 1].",
+      "createdAt": "2026-07-09T18:28:18.125Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 22
+    },
+    {
+      "id": "msg-1783621713570-user",
+      "sessionId": "session-1783621696393-sjr5ltx",
+      "role": "user",
+      "content": "give me skills wt are they have in the resume",
+      "createdAt": "2026-07-09T18:28:33.570Z"
+    },
+    {
+      "id": "msg-1783621716788-assistant",
+      "sessionId": "session-1783621696393-sjr5ltx",
+      "role": "assistant",
+      "content": "The skills listed in the resume are:\n\n**Technical Skills:**\n- **Frontend:** HTML, CSS, JavaScript, React.js, Responsive Design\n- **Backend:** Python, FastAPI, REST APIs Development\n- **Database:** MySQL\n- **Generative AI:** OpenAI API, Gemini API, Prompt Engineering, LLM Integration\n- **Familiar with:** Jira, Machine Learning, Deep Learning, Networking, PostgreSQL, MongoDB, Canva\n- **Tools:** Git, GitHub, Postman, VS Code, Vercel, Render\n\n**Languages:** English, Telugu, Kannada, Hindi (Basics) \n\nThese skills indicate a strong foundation in both frontend and backend development, as well as experience with generative AI technologies [Source 2].",
+      "createdAt": "2026-07-09T18:28:36.789Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 41
+    },
+    {
+      "id": "msg-1783621733306-user",
+      "sessionId": "session-1783621733303-4vaii0x",
+      "role": "user",
+      "content": "Summarize this document in 3 bullet points.",
+      "createdAt": "2026-07-09T18:28:53.306Z"
+    },
+    {
+      "id": "msg-1783621735734-assistant",
+      "sessionId": "session-1783621733303-4vaii0x",
+      "role": "assistant",
+      "content": "- The document outlines the professional profile of Thota Harshavardhan Reddy, a Python Full Stack Developer with experience in FastAPI, React.js, and RESTful API development, along with technical skills in various programming languages and tools.\n\n- It highlights his internship experience as a Frontend Developer, where he developed reusable UI components, integrated RESTful APIs, and improved mobile responsiveness and application performance.\n\n- The document also lists his educational background, including a B.Tech in Computer Science Engineering and a Diploma in Mechanical Engineering, along with relevant certifications in MERN Stack Development and AI & Machine Learning.",
+      "createdAt": "2026-07-09T18:28:55.734Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 30
+    },
+    {
+      "id": "msg-1783621758096-user",
+      "sessionId": "session-1783621733303-4vaii0x",
+      "role": "user",
+      "content": "give me skills wt are they have in the resume",
+      "createdAt": "2026-07-09T18:29:18.096Z"
+    },
+    {
+      "id": "msg-1783621760194-assistant",
+      "sessionId": "session-1783621733303-4vaii0x",
+      "role": "assistant",
+      "content": "The skills listed in the resume include:\n\n- **Frontend Skills**: HTML, CSS, JavaScript, React.js, Responsive Design\n- **Backend Skills**: Python, FastAPI, REST APIs Development\n- **Database Skills**: MySQL, PostgreSQL, MongoDB\n- **Generative AI Skills**: OpenAI API, Gemini API, Prompt Engineering, LLM Integration\n- **Familiar Tools and Concepts**: Git, GitHub, Postman, VS Code, Vercel, Render, Jira, Machine Learning, Deep Learning, Networking, Canva\n- **Languages**: English, Telugu, Kannada, Hindi (Basics) [Source 2].",
+      "createdAt": "2026-07-09T18:29:20.194Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 41
+    },
+    {
+      "id": "msg-1783621813999-user",
+      "sessionId": "session-1783621813995-ptta5sc",
+      "role": "user",
+      "content": "Summarize this document in 3 bullet points.",
+      "createdAt": "2026-07-09T18:30:13.999Z"
+    },
+    {
+      "id": "msg-1783621816470-assistant",
+      "sessionId": "session-1783621813995-ptta5sc",
+      "role": "assistant",
+      "content": "- Thota Harshavardhan Reddy is a Python Full Stack Developer with experience in FastAPI, React.js, and database management using MySQL and PostgreSQL, proficient in developing RESTful APIs and frontend-backend integration.\n- Completed an internship as a Frontend Developer at SmartInternz where he developed reusable React.js components, integrated RESTful APIs, and improved application responsiveness and performance.\n- Educated in Computer Science Engineering and Mechanical Engineering, holding certifications in MERN Stack Development and AI & Machine Learning, with a GPA of 7.0 in both fields. [Source 2][Source 3][Source 4]",
+      "createdAt": "2026-07-09T18:30:16.470Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 30
+    },
+    {
+      "id": "msg-1783621859882-user",
+      "sessionId": "session-1783621813995-ptta5sc",
+      "role": "user",
+      "content": "give me 2 points the about that pdf ",
+      "createdAt": "2026-07-09T18:30:59.882Z"
+    },
+    {
+      "id": "msg-1783621861987-assistant",
+      "sessionId": "session-1783621813995-ptta5sc",
+      "role": "assistant",
+      "content": "- Thota Harshavardhan Reddy is a Python Full Stack Developer skilled in FastAPI, React.js, and database management, with experience in developing RESTful APIs and responsive UI design [Source 2].\n- He has completed a Frontend Developer Internship at SmartInternz, where he developed reusable React.js components and integrated RESTful APIs, significantly improving application performance and usability [Source 3].",
+      "createdAt": "2026-07-09T18:31:01.987Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 22
+    },
+    {
+      "id": "msg-1783621875113-user",
+      "sessionId": "session-1783621875108-zvjhuz9",
+      "role": "user",
+      "content": "Summarize this document in 3 bullet points.",
+      "createdAt": "2026-07-09T18:31:15.113Z"
+    },
+    {
+      "id": "msg-1783621877726-assistant",
+      "sessionId": "session-1783621875108-zvjhuz9",
+      "role": "assistant",
+      "content": "- Thota Harshavardhan Reddy is a Python Full Stack Developer with experience in FastAPI, React.js, and various database technologies, focusing on RESTful API development and scalable applications. \n\n- They have completed a B.Tech in Computer Science Engineering and a Diploma in Mechanical Engineering, with relevant certifications in MERN Stack Development and AI & Machine Learning.\n\n- Their work experience includes a Frontend Developer Internship at SmartInternz, where they developed reusable UI components, integrated RESTful APIs, and implemented a scalable Task Management REST API and a Generative AI chatbot using OpenAI and Gemini APIs.",
+      "createdAt": "2026-07-09T18:31:17.726Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 30
+    },
+    {
+      "id": "msg-1783622062315-user",
+      "sessionId": "session-1783622062311-ncosw6q",
+      "role": "user",
+      "content": "Summarize this document in 3 bullet points.",
+      "createdAt": "2026-07-09T18:34:22.315Z"
+    },
+    {
+      "id": "msg-1783622065250-assistant",
+      "sessionId": "session-1783622062311-ncosw6q",
+      "role": "assistant",
+      "content": "- Thota Harshavardhan Reddy is a Python Full Stack Developer with experience in FastAPI, React.js, and MySQL, skilled in developing RESTful APIs and integrating frontend-backend systems, as noted in his internship at SmartInternz where he improved frontend development efficiency by 30% and enhanced application usability.\n\n- He has developed notable projects, including a scalable Task Management REST API and a Generative AI chatbot utilizing OpenAI and Gemini APIs, focusing on modular architecture, performance optimization, and secure API management.\n\n- Harshavardhan is currently pursuing a B.Tech in Computer Science Engineering from Gates Institute of Technology, with prior education in Mechanical Engineering, and holds certifications in MERN Stack Development and AI & Machine Learning [Source 2][Source 4].",
+      "createdAt": "2026-07-09T18:34:25.250Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 30
+    },
+    {
+      "id": "msg-1783622076623-user",
+      "sessionId": "session-1783622062311-ncosw6q",
+      "role": "user",
+      "content": "give me 2 points the about that pdf ",
+      "createdAt": "2026-07-09T18:34:36.623Z"
+    },
+    {
+      "id": "msg-1783622079610-assistant",
+      "sessionId": "session-1783622062311-ncosw6q",
+      "role": "assistant",
+      "content": "1. Thota Harshavardhan Reddy is a Python Full Stack Developer with expertise in technologies such as FastAPI, React.js, and MySQL, having completed an internship where he significantly improved frontend development efficiency and application usability by integrating multiple RESTful APIs and enhancing mobile responsiveness [Source 2][Source 3].\n\n2. He has developed key projects including a scalable Task Management REST API and a Generative AI chatbot, utilizing frameworks like FastAPI and libraries such as OpenAI and Gemini APIs, focusing on performance optimization and secure API management [Source 3][Source 4].",
+      "createdAt": "2026-07-09T18:34:39.610Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 22
+    },
+    {
+      "id": "msg-1783622526869-user",
+      "sessionId": "session-1783622526865-4pyadhf",
+      "role": "user",
+      "content": "i am uploading the two documetns and give me best resume ",
+      "createdAt": "2026-07-09T18:42:06.869Z"
+    },
+    {
+      "id": "msg-1783622528134-assistant",
+      "sessionId": "session-1783622526865-4pyadhf",
+      "role": "assistant",
+      "content": "I don't know based on the document. The context provided does not include specific content related to creating or assessing resumes from uploaded documents.",
+      "createdAt": "2026-07-09T18:42:08.135Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 34
+    },
+    {
+      "id": "msg-1783623059924-user",
+      "sessionId": "session-1783623059915-3u1nhsg",
+      "role": "user",
+      "content": "which resuem is good  like based on the skill s",
+      "createdAt": "2026-07-09T18:50:59.924Z"
+    },
+    {
+      "id": "msg-1783623061637-assistant",
+      "sessionId": "session-1783623059915-3u1nhsg",
+      "role": "assistant",
+      "content": "I don't know based on the document which resume is better in terms of skills, as there is no comparative analysis of resumes provided in the context. The information consists of details from one individual's professional background, skills, and projects but does not include other resumes for comparison.",
+      "createdAt": "2026-07-09T18:51:01.637Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 32
+    },
+    {
+      "id": "msg-1783623139763-user",
+      "sessionId": "session-1783623139758-921g11u",
+      "role": "user",
+      "content": "which resume is good ",
+      "createdAt": "2026-07-09T18:52:19.763Z"
+    },
+    {
+      "id": "msg-1783623141125-assistant",
+      "sessionId": "session-1783623139758-921g11u",
+      "role": "assistant",
+      "content": "I don't know based on the document.",
+      "createdAt": "2026-07-09T18:52:21.125Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 35
+    },
+    {
+      "id": "msg-1783625068806-user",
+      "sessionId": "session-1783625068796-wtmibj8",
+      "role": "user",
+      "content": "Summarize this document",
+      "createdAt": "2026-07-09T19:24:28.806Z"
+    },
+    {
+      "id": "msg-1783625072299-assistant",
+      "sessionId": "session-1783625068796-wtmibj8",
+      "role": "assistant",
+      "content": "The document outlines the professional profile of Parameshwar Reddy Guraka, a Full Stack Developer with over a year of experience in web application and AI solution development using technologies such as Python, FastAPI, React.js, Node.js, and JavaScript. It details his skill set in REST API development, JWT authentication, and AI frameworks like LangChain and RAG.\n\nKey experiences include:\n- A full stack developer intern role at Spotify, where he increased user engagement by 30% and integrated multiple third-party APIs.\n- A frontend developer intern role at Digiotai, where he designed reusable UI components that enhanced user satisfaction by 25%.\n\nThe document also highlights two projects: an AI-powered financial report summarizer that significantly improved analyst efficiency and an AI chatbot application achieving over 90% answer accuracy. Guraka holds a B.Tech in Mechanical Engineering and has completed a certification in Python Full Stack Web Development and Generative AI.\n\nThe document presents his skills in various programming languages and technologies, including databases and frontend frameworks, and includes contact information for further inquiry.",
+      "createdAt": "2026-07-09T19:24:32.299Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 34
+    },
+    {
+      "id": "msg-1783625095001-user",
+      "sessionId": "session-1783625068796-wtmibj8",
+      "role": "user",
+      "content": "giv eme summary two lines",
+      "createdAt": "2026-07-09T19:24:55.002Z"
+    },
+    {
+      "id": "msg-1783625097066-assistant",
+      "sessionId": "session-1783625068796-wtmibj8",
+      "role": "assistant",
+      "content": "Parameshwar Reddy Guraka is a Full Stack Developer with over a year of experience in web and AI solution development, proficient in technologies such as Python, FastAPI, and React.js. He has successfully developed scalable applications and optimized user interfaces, achieving significant enhancements in user engagement and satisfaction scores. [Source 1][Source 2][Source 3]",
+      "createdAt": "2026-07-09T19:24:57.067Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 25
+    },
+    {
+      "id": "msg-1783625531726-user",
+      "sessionId": "session-1783625531720-502xbrr",
+      "role": "user",
+      "content": "giv eme two bullet points",
+      "createdAt": "2026-07-09T19:32:11.726Z"
+    },
+    {
+      "id": "msg-1783625532645-assistant",
+      "sessionId": "session-1783625531720-502xbrr",
+      "role": "assistant",
+      "content": "I don't know based on the document.",
+      "createdAt": "2026-07-09T19:32:12.645Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 27
+    },
+    {
+      "id": "msg-1783625548932-user",
+      "sessionId": "session-1783625531720-502xbrr",
+      "role": "user",
+      "content": "giv em esummery in two  lines",
+      "createdAt": "2026-07-09T19:32:28.932Z"
+    },
+    {
+      "id": "msg-1783625550665-assistant",
+      "sessionId": "session-1783625531720-502xbrr",
+      "role": "assistant",
+      "content": "THOTA HARSHAVARDHAN REDDY is a Python Full Stack Developer with expertise in FastAPI, React.js, and database management, experienced in developing scalable applications and RESTful APIs. He has hands-on experience with Generative AI, having built projects like a Task Management API and a Generative AI chatbot. [Source 1][Source 3]",
+      "createdAt": "2026-07-09T19:32:30.665Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 23
+    },
+    {
+      "id": "msg-1783625619063-user",
+      "sessionId": "session-1783625619054-xf5m5g5",
+      "role": "user",
+      "content": "Summarize this document in bullet points",
+      "createdAt": "2026-07-09T19:33:39.063Z"
+    },
+    {
+      "id": "msg-1783625626016-assistant",
+      "sessionId": "session-1783625619054-xf5m5g5",
+      "role": "assistant",
+      "content": "- **Candidate Name**: Parameshwar Reddy Guraka\n- **Contact Information**: \n  - Phone: 8008879645\n  - Email: gurakaparameshreddy@gmail.com\n  - LinkedIn, GitHub, Portfolio links provided\n  \n- **Professional Summary**: \n  - Full Stack Developer with over 1 year of experience\n  - Expert in web applications and AI-powered solutions\n  - Proficient in Python, FastAPI, React.js, and Node.js\n  - Skilled in REST API Development and JWT Authentication\n\n- **Skills**:\n  - **Languages**: HTML5, CSS3, JavaScript, Python, SQL\n  - **Frontend Technologies**: React.js, Next.js, Material UI, Tailwind CSS\n  - **Backend Technologies**: FastAPI, Node.js, Express.js\n  - **Databases**: PostgreSQL, MongoDB, SQL, FAISS\n  - **AI Technologies**: LLMs, LangChain, RAG, Prompt Engineering\n\n- **Work Experience**:\n  - **Talent Spotify** (May 2025 - Dec 2025): Full Stack Developer Intern\n    - Developed RESTful applications, enhancing user engagement by 30%\n    - Integrated third-party APIs, reducing integration time by 40%\n    - Implemented JWT-based authentication for over 1,000 users\n  \n  - **Digiotai** (Jan 2025 - Apr 2025): Frontend Developer Intern\n    - Created 15+ reusable UI components, increasing user satisfaction by 25%\n    - Resolved 30+ UI bugs, improving load time by 35%\n\n- **Projects**:\n  - **AI-Powered Financial Report Summarizer & Q&A**: \n    - Developed a system reducing key insight extraction time by ~70%\n    \n  - **AI Chatbot Application**: \n    - Achieved 90%+ answer accuracy through optimized prompt engineering\n    - Technologies used included Python, FastAPI, LangChain\n  \n  - **Mini E-Commerce Store (UniCart)**: \n    - Built a responsive web application with essential e-commerce features\n  \n- **Education**:\n  - **JNTU**: B.Tech in Mechanical Engineering (Expected 2026, GPA: 8.2/10)\n  \n- **Certifications**:\n  - Python Full Stack Web Development + Generative AI from ProStack Academy (2026)",
+      "createdAt": "2026-07-09T19:33:46.016Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 34
+    },
+    {
+      "id": "msg-1783626228717-user",
+      "sessionId": "session-1783626228709-2wj4o6s",
+      "role": "user",
+      "content": "Summarize this document in bullet points",
+      "createdAt": "2026-07-09T19:43:48.717Z"
+    },
+    {
+      "id": "msg-1783626237005-assistant",
+      "sessionId": "session-1783626228709-2wj4o6s",
+      "role": "assistant",
+      "content": "- **Name**: Parameshwar Reddy Guraka\n- **Contact Information**: Phone: 8008879645 | Email: gurakaparameshreddy@gmail.com | LinkedIn, GitHub, Portfolio links included.\n  \n- **Professional Summary**:\n  - Full Stack Developer with over 1 year of experience.\n  - Expertise in designing and building scalable web applications and AI-powered solutions using technologies like Python, FastAPI, React.js, Node.js, and JavaScript.\n  - Proficient in REST API development, JWT authentication, and LangChain-based RAG pipelines.\n  - Passionate about Generative AI and modern full-stack development.\n\n- **Skills**:\n  - **Languages**: HTML5, CSS3, JavaScript, Python, SQL.\n  - **Frontend Technologies**: React.js, Next.js, Bootstrap, Material UI, Tailwind CSS.\n  - **Backend Technologies**: FastAPI, Node.js, Express.js, RESTful API Development.\n  - **Databases**: PostgreSQL, MongoDB, SQL, FAISS (Vector Database).\n  - **Generative AI & Frameworks**: Large Language Models (LLMs), LangChain, RAG, Prompt Engineering, Agentic AI.\n\n- **Work Experience**:\n  - **Talent Spotify** (May 2025 - Dec 2025): Full Stack Developer Intern.\n    - Developed scalable RESTful web applications, increasing user engagement by 30%.\n    - Integrated over 5 third-party APIs, reducing development time by 40%.\n    - Implemented JWT-based authentication for over 1,000 users.\n  \n  - **Digiotai** (Jan 2025 - Apr 2025): Frontend Developer Intern.\n    - Designed and optimized 15+ reusable UI components, increasing user satisfaction by 25%.\n    - Resolved over 30 UI bugs, reducing page load time by 35%.\n\n- **Projects**:\n  - **AI-Powered Financial Report Summarizer & Q&A**: Developed system to process financial reports, reducing time to extract insights by ~70%.\n  - **AI Chatbot Application**: Built an end-to-end chatbot, achieving over 90% answer accuracy.\n\n- **Education**:\n  - **B.Tech in Mechanical Engineering** from JNTU (GPA: 8.2/10) (2022 - 2026).\n  - **Intermediate Education** from Sri Chaitanya Junior College, Kurnool (2020 - 2022).\n\n- **Certifications**: \n  - Python Full Stack Web Development + Generative AI from ProStack Academy (2026).",
+      "createdAt": "2026-07-09T19:43:57.005Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 34
+    },
+    {
+      "id": "msg-1783626254351-user",
+      "sessionId": "session-1783626228709-2wj4o6s",
+      "role": "user",
+      "content": "two bullet point only",
+      "createdAt": "2026-07-09T19:44:14.351Z"
+    },
+    {
+      "id": "msg-1783626258078-assistant",
+      "sessionId": "session-1783626228709-2wj4o6s",
+      "role": "assistant",
+      "content": "- Developed a financial report analysis system using RAG pipeline to process PDF/Excel reports, reducing the time to extract key FP&A insights by ~70% during user testing, significantly improving analyst efficiency [Source 1].\n- Built a responsive e-commerce web application with React.js featuring product browsing, shopping cart, checkout, and order management, delivering a seamless cross-device experience for 50+ test users [Source 2].",
+      "createdAt": "2026-07-09T19:44:18.078Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 31
+    },
+    {
+      "id": "msg-1783627113103-user",
+      "sessionId": "session-1783627113090-cz2bz6y",
+      "role": "user",
+      "content": "Summarize this document in bullet points",
+      "createdAt": "2026-07-09T19:58:33.103Z"
+    },
+    {
+      "id": "msg-1783627119908-assistant",
+      "sessionId": "session-1783627113090-cz2bz6y",
+      "role": "assistant",
+      "content": "- **Name**: Thota Harshavardhan Reddy\n- **Contact Information**: \n  - Phone: 7396683427\n  - Email: thotaharshareddy@gmail.com\n  - LinkedIn: [LinkedIn Profile](https://linkedin.com/in/thotaharshavardhanreddy)\n  - GitHub: [GitHub Profile](https://github.com/Harshareddy3391)\n  \n- **Professional Summary**: \n  - Python Full Stack Developer\n  - Experience in FastAPI, React.js, Python, JavaScript, MySQL, PostgreSQL, and Generative AI applications.\n  - Skilled in RESTful API development, frontend-backend integration, JWT authentication, responsive UI design, API testing, and debugging.\n\n- **Technical Skills**:\n  - **Frontend**: HTML, CSS, JavaScript, React.js, Responsive Design\n  - **Backend**: Python, FastAPI, REST APIs Development\n  - **Database**: MySQL\n  - **Generative AI**: OpenAI API, Gemini API, Prompt Engineering, LLM Integration\n  - **Familiar**: Jira, Machine Learning, Deep Learning, Networking, PostgreSQL, MongoDB, Canva\n  - **Tools**: Git, GitHub, Postman, VS Code, Vercel, Render\n  - **Languages**: English, Telugu, Kannada, Hindi (Basics)\n\n- **Work Experience**:\n  - **SmartInternz | Frontend Developer Intern (Feb 2025 - Jun 2025)**:\n    - Developed 10+ reusable React.js UI components, reducing repetitive frontend development by 30%.\n    - Integrated 5+ RESTful API endpoints, enhancing backend communication.\n    - Improved mobile responsiveness and cross-browser compatibility.\n\n- **Projects**:\n  - **Task Management API System**: Developed a scalable REST API using FastAPI, SQLAlchemy, and MySQL, implementing CRUD operations and optimizing database queries.\n  - **AI Chatbot Using OpenAI & Gemini APIs**: Built a generative AI chatbot with real-time interaction, secure API key management, and API documentation.\n\n- **Education**:\n  - **Gates Institute of Technology (2023 - 2026)**: B.Tech in Computer Science Engineering (GPA: 7.0)\n  - **M.J.R College of Engineering & Technology (2020 - 2023)**: Diploma in Mechanical Engineering (GPA: 7.0)\n\n- **Certifications**:\n  - MERN Stack Development Certification\n  - AI & Machine Learning Certification",
+      "createdAt": "2026-07-09T19:58:39.908Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 31
     }
   ]
 }

@@ -1,20 +1,12 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# DocuMind AI
 
-# Run and deploy your AI Studio app
+Upload a PDF, ask questions, get answers with page citations.
 
-This contains everything you need to run your app locally.
+```bash
+npm install
+npm run dev
+```
 
-View your app in AI Studio: https://ai.studio/apps/2b835ad8-cfc5-432b-90a2-3a2c272e9a26
+Open http://localhost:3000
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Set `OPENAI_API_KEY` in `.env`

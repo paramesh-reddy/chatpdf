@@ -4,20 +4,15 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Send, Sparkles, AlertCircle, Quote, MessageSquare, ArrowRight, Shield, 
-  RefreshCw, Loader2, Copy, Download, Share2, Clipboard, Trash2, Check 
-} from 'lucide-react';
+import { Send, Loader2, Copy, Check, Sparkles, Quote } from 'lucide-react';
 import ApiService from '../api.ts';
 import { DocumentRecord, ChatSession, Message } from '../types.ts';
 
 interface ChatWindowProps {
-  documentRecord: DocumentRecord | null;
+  documentRecord: DocumentRecord;
   activeSession: ChatSession | null;
   onSessionCreated: (sess: ChatSession) => void;
   onPageSelect: (pageNumber: number) => void;
-  theme: 'dark' | 'light';
   showToast: (msg: string, type?: 'success' | 'info' | 'error') => void;
 }
 
@@ -26,399 +21,260 @@ export default function ChatWindow({
   activeSession,
   onSessionCreated,
   onPageSelect,
-  theme,
   showToast,
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [messagesLoading, setMessagesLoading] = useState(false);
-  const [streamingAnswer, setStreamingAnswer] = useState('');
-  const [streamingMeta, setStreamingMeta] = useState<{ source_pages: number[]; confidence_score: number } | null>(null);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
-  const [errorText, setErrorText] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const messageEndRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const isStreamingRef = useRef(false);
+  const streamingRef = useRef('');
+  const sessionIdRef = useRef<string | null>(activeSession?.id || null);
+  const skipLoadRef = useRef(false);
 
-  // Load message logs when session is activated
+  useEffect(() => { isStreamingRef.current = isStreaming; }, [isStreaming]);
+  useEffect(() => { sessionIdRef.current = activeSession?.id || null; }, [activeSession?.id]);
+
   useEffect(() => {
-    if (activeSession) {
-      loadMessages();
-    } else {
-      setMessages([]);
-    }
-    setStreamingAnswer('');
-    setStreamingMeta(null);
-    setIsStreaming(false);
-    setErrorText(null);
-  }, [activeSession]);
+    if (isStreamingRef.current) return;
+    if (skipLoadRef.current) { skipLoadRef.current = false; return; }
+    if (activeSession) loadMessages(activeSession.id);
+    else setMessages([]);
+  }, [activeSession?.id, documentRecord.id]);
 
-  // Autoscroll to bottom
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, streamingAnswer, isStreaming]);
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, streaming, isStreaming]);
 
-  const loadMessages = async () => {
-    if (!activeSession) return;
-    setMessagesLoading(true);
+  const loadMessages = async (sessionId: string) => {
+    setLoading(true);
     try {
-      const data = await ApiService.listMessages(activeSession.id);
-      setMessages(data);
-    } catch (e) {
-      console.error('Failed to load chat messages:', e);
-      showToast('Failed to load chat logs', 'error');
+      setMessages(await ApiService.listMessages(sessionId));
+    } catch {
+      showToast('Failed to load messages', 'error');
     } finally {
-      setMessagesLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleSend = async (e?: React.FormEvent, customText?: string) => {
-    if (e) e.preventDefault();
-    const textToSend = customText || inputMessage;
-    if (!textToSend.trim() || !documentRecord || isStreaming) return;
+  const handleSend = async (text?: string) => {
+    const question = (text || input).trim();
+    if (!question || isStreaming) return;
 
-    setInputMessage('');
-    setErrorText(null);
+    setInput('');
     setIsStreaming(true);
-    setStreamingAnswer('');
-    setStreamingMeta(null);
+    isStreamingRef.current = true;
+    setStreaming('');
+    streamingRef.current = '';
 
-    // Render User message locally immediately for quick feedback
-    const userTempMessage: Message = {
-      id: `user-temp-${Date.now()}`,
-      sessionId: activeSession?.id || 'temp',
+    setMessages((prev) => [...prev, {
+      id: `user-${Date.now()}`,
+      sessionId: sessionIdRef.current || 'temp',
       role: 'user',
-      content: textToSend,
+      content: question,
       createdAt: new Date().toISOString(),
-    };
-    setMessages((prev) => [...prev, userTempMessage]);
+    }]);
 
-    // Use full-stack SSE streaming
     ApiService.streamChat(
-      {
-        documentId: documentRecord.id,
-        sessionId: activeSession?.id,
-        question: textToSend,
-      },
+      { documentId: documentRecord.id, sessionId: sessionIdRef.current || undefined, question },
       {
         onChunk: (chunk) => {
-          setStreamingAnswer((prev) => prev + chunk);
+          streamingRef.current += chunk;
+          setStreaming(streamingRef.current);
         },
-        onSessionCreated: (sessData) => {
-          const newSession: ChatSession = {
-            id: sessData.sessionId,
+        onSessionCreated: (data) => {
+          skipLoadRef.current = true;
+          sessionIdRef.current = data.sessionId;
+          onSessionCreated({
+            id: data.sessionId,
             userId: ApiService.getUserId() || '',
             documentId: documentRecord.id,
-            title: sessData.title,
+            title: data.title,
             createdAt: new Date().toISOString(),
-          };
-          onSessionCreated(newSession);
-        },
-        onDone: (meta) => {
-          setStreamingMeta({
-            source_pages: meta.source_pages,
-            confidence_score: meta.confidence_score,
           });
+        },
+        onDone: async (meta) => {
+          sessionIdRef.current = meta.sessionId;
+          const answerText = meta.answer || streamingRef.current;
 
-          // Sync database message array
-          setTimeout(() => {
-            loadMessages();
-            setIsStreaming(false);
-            setStreamingAnswer('');
-            setStreamingMeta(null);
-            showToast('Gemini response finalized.', 'success');
-          }, 500);
+          if (answerText) {
+            setMessages((prev) => [...prev, {
+              id: `msg-${Date.now()}`,
+              sessionId: meta.sessionId,
+              role: 'assistant',
+              content: answerText,
+              createdAt: new Date().toISOString(),
+              sourcePages: meta.source_pages,
+              confidenceScore: meta.confidence_score,
+            }]);
+          } else {
+            // Fallback: load from server if stream text was lost
+            try {
+              const saved = await ApiService.listMessages(meta.sessionId);
+              setMessages(saved);
+            } catch {
+              showToast('Response saved but could not display', 'error');
+            }
+          }
+
+          setIsStreaming(false);
+          isStreamingRef.current = false;
+          setStreaming('');
+          streamingRef.current = '';
         },
         onError: (err) => {
-          setErrorText(err || 'RAG generation error occurred.');
+          showToast(err || 'Failed to get response', 'error');
           setIsStreaming(false);
-          setStreamingAnswer('');
-          setStreamingMeta(null);
-          showToast('Could not complete query streaming.', 'error');
+          isStreamingRef.current = false;
+          setStreaming('');
+          streamingRef.current = '';
         },
       }
     );
   };
 
-  const handleCopyMessage = (text: string, msgId: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedId(msgId);
-    showToast('Copied content to clipboard', 'success');
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const handleExportChatMarkdown = () => {
-    if (messages.length === 0) return;
-    const header = `# AetherDocs AI Session Export\nDocument: ${documentRecord?.name || 'Untitled'}\nDate: ${new Date().toLocaleDateString()}\n\n`;
-    const chatBody = messages.map(msg => {
-      const roleStr = msg.role === 'user' ? '### USER QUESTION' : '### AI ASSISTANT';
-      let msgStr = `${roleStr}\n${msg.content}\n\n`;
-      if (msg.sourcePages && msg.sourcePages.length > 0) {
-        msgStr += `*Page Citations: ${msg.sourcePages.join(', ')}*\n\n`;
-      }
-      return msgStr;
-    }).join('---\n\n');
-
-    const fullBlob = new Blob([header + chatBody], { type: 'text/markdown' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(fullBlob);
-    link.download = `chat-export-${activeSession?.id || 'session'}.md`;
-    link.click();
-    showToast('Exported conversation as Markdown (.md)', 'success');
-  };
-
-  const isDark = theme === 'dark';
-
-  const samplePrompts = [
-    'Summarize this document in 3 bullet points.',
-    'What are the core key takeaways from this PDF?',
-    'What are the main findings or metrics mentioned?',
-    'Explain any complex vocabulary or theories here.',
+  const suggestions = [
+    'Summarize this document in bullet points',
+    'What are the key skills and experience mentioned?',
+    'List the most important details from this PDF',
   ];
 
+  const showFeed = messages.length > 0 || isStreaming;
+
   return (
-    <div className={`flex flex-col h-full border rounded-2xl overflow-hidden font-sans transition-colors duration-200 ${
-      isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
-    }`} id="chat-window-root">
-      
-      {/* Premium Header Control Line */}
-      {documentRecord && (
-        <div className={`p-4 border-b flex items-center justify-between ${
-          isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200'
-        }`} id="chat-window-header">
-          <div className="flex items-center space-x-2">
-            <Sparkles className="h-4 w-4 text-cyan-400 animate-pulse" />
-            <span className={`text-xs font-extrabold tracking-tight font-display uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-              Semantic RAG Console
-            </span>
-          </div>
-
-          {/* Export action controls */}
-          {messages.length > 0 && (
-            <div className="flex items-center space-x-1.5">
-              <button
-                onClick={handleExportChatMarkdown}
-                className={`p-1.5 rounded-lg border text-[10px] font-semibold flex items-center space-x-1 transition-all cursor-pointer ${
-                  isDark
-                    ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 hover:border-slate-700 text-slate-300'
-                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-600 shadow-sm'
-                }`}
-                title="Download Chat Log"
-              >
-                <Download className="h-3 w-3" />
-                <span className="hidden sm:inline">Export</span>
-              </button>
-            </div>
-          )}
+    <div className="h-full flex flex-col rounded-xl border border-slate-200 bg-white overflow-hidden dark:border-slate-800/80 dark:bg-slate-900/50">
+      <div className="px-4 py-3 border-b border-slate-200 flex items-center gap-2 dark:border-slate-800/60">
+        <div className="h-7 w-7 rounded-lg bg-cyan-500/15 flex items-center justify-center">
+          <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
         </div>
-      )}
+        <div>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white">DocuMind AI</h3>
+          <p className="text-[11px] text-slate-500">Intelligent answers with page citations</p>
+        </div>
+      </div>
 
-      {/* Messages Feed Area */}
-      <div className={`flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 scrollbar-thin ${
-        isDark ? 'bg-slate-950/10' : 'bg-slate-50/20'
-      }`} id="chat-messages-container">
-        {!documentRecord ? (
-          <div className="h-full flex flex-col items-center justify-center text-center py-12" id="chat-no-doc-state">
-            <MessageSquare className="h-12 w-12 mb-3.5 text-slate-600 opacity-60 stroke-[1.5]" />
-            <p className={`text-sm font-bold ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>RAG Conversation Engine</p>
-            <p className="text-xs text-slate-500 max-w-xs mt-1 leading-relaxed">
-              Select or vectorize a document from your repository workspace to start searching page contexts.
-            </p>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+        {loading && !isStreaming ? (
+          <div className="flex justify-center py-16">
+            <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
           </div>
-        ) : messagesLoading ? (
-          <div className="h-full flex flex-col items-center justify-center text-center py-12">
-            <Loader2 className="h-7 w-7 text-cyan-400 animate-spin mb-3" />
-            <p className="text-xs text-slate-500 font-mono">Decoding indexed interaction history...</p>
-          </div>
-        ) : messages.length === 0 && !streamingAnswer && !isStreaming ? (
-          // Welcome Prompts / Empty State
-          <div className="h-full flex flex-col justify-center items-center py-8 text-center max-w-sm mx-auto" id="chat-empty-state">
-            <div className="h-11 w-11 bg-cyan-400/10 border border-cyan-400/20 rounded-xl flex items-center justify-center mb-4 text-cyan-400 shadow-md">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <h4 className={`font-extrabold text-base mb-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>Ask anything about this document!</h4>
-            <p className="text-slate-500 text-xs mb-6 text-center leading-relaxed">
-              Gemini has compiled semantic indices across the layout. Choose a sample query template or type your question below.
+        ) : !showFeed ? (
+          <div className="py-6">
+            <p className="text-sm text-slate-500 text-center mb-6 dark:text-slate-400">
+              Ask a question about <span className="text-slate-700 font-medium dark:text-slate-300">{documentRecord.name}</span>
             </p>
-            <div className="w-full space-y-2 text-left">
-              {samplePrompts.map((prompt, idx) => (
+            <div className="space-y-2">
+              {suggestions.map((s) => (
                 <button
-                  id={`sample-prompt-btn-${idx}`}
-                  key={idx}
-                  onClick={() => handleSend(undefined, prompt)}
-                  className={`w-full flex items-center justify-between p-3 rounded-xl border text-xs transition-all cursor-pointer group ${
-                    isDark
-                      ? 'bg-slate-950/40 hover:bg-slate-950 border-slate-800 text-slate-300'
-                      : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-600 shadow-sm'
-                  }`}
+                  key={s}
+                  onClick={() => handleSend(s)}
+                  className="w-full text-left px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600 hover:text-slate-900 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 dark:hover:text-white"
                 >
-                  <span className="truncate pr-4 font-medium">{prompt}</span>
-                  <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                  {s}
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          <div className="space-y-4" id="chat-feed-list">
-            {messages.map((msg) => {
-              const isUser = msg.role === 'user';
-              const isCopied = copiedId === msg.id;
-              return (
-                <motion.div
-                  id={`msg-bubble-${msg.id}`}
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`max-w-[85%] rounded-2xl p-4 border relative group shadow-sm ${
-                    isUser
-                      ? isDark
-                        ? 'bg-slate-800 border-slate-700/60 text-slate-100'
-                        : 'bg-slate-100 border-slate-200 text-slate-800'
-                      : isDark
-                        ? 'bg-slate-950 border-slate-800/80 text-slate-200'
-                        : 'bg-white border-slate-200/80 text-slate-800'
-                  }`}>
-                    {/* Header Details / Copy response */}
-                    <div className="flex items-center justify-between text-[9px] font-mono mb-1.5 text-slate-500">
-                      <span>{isUser ? 'USER QUESTION' : 'ASSISTANT RESPONSE'}</span>
-                      {!isUser && (
+          <>
+            {messages.map((msg) => (
+              <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[88%] rounded-2xl px-4 py-3 ${
+                  msg.role === 'user'
+                    ? 'bg-cyan-600 text-white rounded-br-md'
+                    : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-bl-md dark:bg-slate-800/80 dark:text-slate-200 dark:border-slate-700/50'
+                }`}>
+                  {msg.role === 'assistant' && (
+                    <p className="text-[10px] font-medium text-cyan-400 mb-1.5 flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" /> DocuMind AI
+                    </p>
+                  )}
+                  {msg.content ? (
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                  ) : msg.role === 'assistant' ? (
+                    <p className="text-sm text-slate-500 italic">No response generated.</p>
+                  ) : null}
+
+                  {msg.role === 'assistant' && msg.sourcePages && msg.sourcePages.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-2.5 border-t border-slate-200 dark:border-slate-700/40">
+                      <Quote className="h-3 w-3 text-slate-500" />
+                      {msg.sourcePages.map((page) => (
                         <button
-                          onClick={() => handleCopyMessage(msg.content, msg.id)}
-                          className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-800/10 rounded text-slate-400 hover:text-white transition-opacity cursor-pointer"
-                          title="Copy content"
+                          key={page}
+                          onClick={() => onPageSelect(page)}
+                          className="text-[10px] px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25 font-medium transition-colors"
                         >
-                          {isCopied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                          Page {page}
                         </button>
+                      ))}
+                      {msg.confidenceScore !== undefined && (
+                        <span className="text-[10px] text-slate-500 ml-auto">{msg.confidenceScore}% match</span>
                       )}
                     </div>
+                  )}
 
-                    {/* Message Content */}
-                    <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-sans">{msg.content}</p>
-
-                    {/* Citations & Score for Assistant answers */}
-                    {!isUser && (msg.sourcePages || msg.confidenceScore) && (
-                      <div className="mt-3.5 pt-2.5 border-t border-slate-800/10 flex flex-wrap items-center gap-3">
-                        {/* Page citations badges */}
-                        {msg.sourcePages && msg.sourcePages.length > 0 && (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] text-slate-500 font-mono flex items-center">
-                              <Quote className="h-3 w-3 mr-1 text-cyan-400" />
-                              Pages:
-                            </span>
-                            {msg.sourcePages.map((page) => (
-                              <button
-                                id={`citation-badge-page-${page}`}
-                                key={page}
-                                onClick={() => onPageSelect(page)}
-                                className="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500 hover:text-slate-950 text-[10px] text-cyan-400 font-mono font-bold transition-colors cursor-pointer"
-                                title={`Navigate PDF Reader to Page ${page}`}
-                              >
-                                {page}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Confidence meter badge */}
-                        {msg.confidenceScore !== undefined && (
-                          <div className="flex items-center space-x-1.5 ml-auto text-[9px] font-mono text-slate-500">
-                            <Shield className={`h-3 w-3 ${msg.confidenceScore > 70 ? 'text-emerald-400' : 'text-yellow-400'}`} />
-                            <span>{msg.confidenceScore}% RAG Confidence</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
-
-            {/* SSE Streaming Active Answer */}
-            {streamingAnswer && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-start"
-                id="chat-streaming-answer-box"
-              >
-                <div className={`max-w-[85%] rounded-2xl p-4 border shadow-sm ${
-                  isDark ? 'bg-slate-950 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
-                }`}>
-                  <div className="flex items-center space-x-1.5 text-[9px] font-mono mb-1.5 text-cyan-400 animate-pulse">
-                    <Sparkles className="h-3 w-3" />
-                    <span>GENERATING RESPONSE...</span>
-                  </div>
-                  <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-sans">{streamingAnswer}</p>
+                  {msg.role === 'assistant' && msg.content && (
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(msg.content);
+                        setCopiedId(msg.id);
+                        setTimeout(() => setCopiedId(null), 2000);
+                      }}
+                      className="mt-2 text-slate-600 hover:text-slate-400 transition-colors"
+                    >
+                      {copiedId === msg.id ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                    </button>
+                  )}
                 </div>
-              </motion.div>
-            )}
+              </div>
+            ))}
 
-            {/* Typing status loader */}
-            {isStreaming && !streamingAnswer && (
-              <div className="flex items-center space-x-2 text-slate-500 text-[11px] font-mono py-1" id="chat-typing-indicator">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400" />
-                <span>Gemini is scanning high-dimensional spaces...</span>
+            {isStreaming && (
+              <div className="flex justify-start">
+                <div className="max-w-[88%] rounded-2xl rounded-bl-md px-4 py-3 bg-slate-100 border border-slate-200 dark:bg-slate-800/80 dark:border-slate-700/50">
+                  {streaming ? (
+                    <>
+                      <p className="text-[10px] font-medium text-cyan-400 mb-1.5 flex items-center gap-1">
+                        <Sparkles className="h-3 w-3" /> DocuMind AI
+                      </p>
+                      <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed dark:text-slate-200">{streaming}</p>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400" />
+                      <span className="text-xs">Analyzing document...</span>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
-
-            {errorText && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center space-x-2" id="chat-error-toast">
-                <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <span className="flex-1">{errorText}</span>
-                <button
-                  id="chat-retry-btn"
-                  onClick={() => {
-                    const lastUserMsg = messages.filter(m => m.role === 'user').pop();
-                    if (lastUserMsg) {
-                      handleSend(undefined, lastUserMsg.content);
-                    }
-                  }}
-                  className="underline flex items-center space-x-0.5 hover:text-white cursor-pointer font-semibold text-[10px]"
-                >
-                  <RefreshCw className="h-3 w-3" />
-                  <span>Retry</span>
-                </button>
-              </div>
-            )}
-          </div>
+          </>
         )}
-        <div ref={messageEndRef} />
+        <div ref={endRef} />
       </div>
 
-      {/* Footer controls input form */}
-      {documentRecord && (
-        <div className={`p-4 border-t ${
-          isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-        }`} id="chat-input-bar">
-          <form className="flex items-center space-x-2.5" onSubmit={handleSend}>
-            <input
-              id="chat-message-input"
-              type="text"
-              placeholder={`Ask Gemini about "${documentRecord.name}"...`}
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              disabled={isStreaming}
-              className={`flex-1 border text-xs sm:text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 transition-all ${
-                isDark
-                  ? 'bg-slate-900 border-slate-800 text-white placeholder-slate-500'
-                  : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 shadow-sm'
-              }`}
-            />
-            <button
-              id="chat-send-btn"
-              type="submit"
-              disabled={!inputMessage.trim() || isStreaming}
-              className="p-2.5 rounded-xl text-slate-950 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-all duration-150 flex-shrink-0"
-              title="Send question"
-            >
-              <Send className="h-3.5 w-3.5" />
-            </button>
-          </form>
-        </div>
-      )}
+      <div className="p-3 border-t border-slate-200 bg-slate-50 dark:border-slate-800/60 dark:bg-slate-900/30">
+        <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={isStreaming}
+            placeholder="Ask a question about this document..."
+            className="flex-1 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 disabled:opacity-50 dark:bg-slate-800/80 dark:border-slate-700/50 dark:text-white dark:placeholder-slate-500"
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || isStreaming}
+            className="px-3 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <Send className="h-4 w-4" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

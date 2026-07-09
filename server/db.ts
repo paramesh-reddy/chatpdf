@@ -220,23 +220,36 @@ export class Database {
     queryEmbedding: number[],
     limit = 5
   ): { chunk: TextChunk; similarity: number }[] {
+    return this.searchSimilarChunksAcrossDocuments([documentId], queryEmbedding, limit);
+  }
+
+  /**
+   * Search across multiple documents and return the best matching chunks globally.
+   */
+  public static searchSimilarChunksAcrossDocuments(
+    documentIds: string[],
+    queryEmbedding: number[],
+    limit = 5
+  ): { chunk: TextChunk; similarity: number; documentName: string }[] {
     const db = this.readDB();
     const allVectors = this.readVectors();
+    const docIdSet = new Set(documentIds);
 
-    // Filter vectors for the target document
-    const docVectors = allVectors.filter(v => v.documentId === documentId);
-    const docChunks = db.chunks.filter(c => c.documentId === documentId);
+    const docVectors = allVectors.filter(v => docIdSet.has(v.documentId));
+    const docChunks = db.chunks.filter(c => docIdSet.has(c.documentId));
+    const docNameById = new Map(
+      db.documents.filter(d => docIdSet.has(d.id)).map(d => [d.id, d.name])
+    );
 
-    // Calculate similarities
     const results = docVectors.map(vec => {
       const similarity = this.cosineSimilarity(vec.values, queryEmbedding);
       const chunk = docChunks.find(c => c.id === vec.chunkId);
-      return { chunk, similarity };
+      const documentName = docNameById.get(vec.documentId) || 'Unknown document';
+      return { chunk, similarity, documentName };
     });
 
-    // Filter out missing chunks, sort descending by similarity, and limit results
     return results
-      .filter((r): r is { chunk: TextChunk; similarity: number } => r.chunk !== undefined)
+      .filter((r): r is { chunk: TextChunk; similarity: number; documentName: string } => r.chunk !== undefined)
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
   }

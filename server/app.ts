@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { Database } from './db.ts';
 import { extractPageWiseText, chunkPageWiseText } from './pdf.ts';
-import { generateEmbeddings, buildRAGPrompt, getAI } from './gemini.ts';
+import { generateEmbeddings, buildRAGPrompt, getAI } from './openai.ts';
 import type { Request, Response, NextFunction } from 'express';
 import type { User, DocumentRecord, TextChunk, VectorRecord, ChatSession, Message } from '../src/types.ts';
 

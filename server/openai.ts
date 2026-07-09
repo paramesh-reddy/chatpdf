@@ -5,7 +5,6 @@
 
 import OpenAI from 'openai';
 
-// Lazy-initialize OpenAI SDK to ensure environment variables are loaded
 let aiInstance: OpenAI | null = null;
 
 export function getAI(): OpenAI {
@@ -20,11 +19,8 @@ export function getAI(): OpenAI {
   return aiInstance;
 }
 
-export const ai = { models: { generateContentStream: () => {} } }; // placeholder for imports
-
 /**
- * Generates embeddings for an array of text chunks using OpenAI's text-embedding-3-small.
- * Implements batching to ensure stability for larger PDF documents.
+ * Generates embeddings for text chunks using OpenAI text-embedding-3-small.
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   const client = getAI();
@@ -58,19 +54,29 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 }
 
 /**
- * Generates a prompt for Gemini using the context chunks and user question.
+ * Builds a RAG prompt from retrieved context chunks and the user question.
  */
 export function buildRAGPrompt(
   question: string,
-  contextChunks: { text: string; pageNumber: number }[]
+  contextChunks: { text: string; pageNumber: number; documentName?: string }[],
+  multiDocument = false
 ): string {
   const formattedContext = contextChunks
-    .map((chunk, idx) => `[Source ${idx + 1}] (Page ${chunk.pageNumber}):\n${chunk.text}`)
+    .map((chunk, idx) => {
+      const sourceLabel = chunk.documentName
+        ? `${chunk.documentName}, Page ${chunk.pageNumber}`
+        : `Page ${chunk.pageNumber}`;
+      return `[Source ${idx + 1}] (${sourceLabel}):\n${chunk.text}`;
+    })
     .join('\n\n---\n\n');
 
-  return `You are ChatPDF, an expert document assistant. Answer the user's question based strictly on the provided context.
-If the answer cannot be found in the context, clearly state that you don't know based on the document, but do NOT make up information.
-Always reference your sources by using [Source X] (or page numbers) where appropriate in your text.
+  const scopeHint = multiDocument
+    ? 'The context may come from multiple documents. Compare and synthesize across sources when relevant.'
+    : 'Answer based strictly on the provided document context.';
+
+  return `You are DocuMind AI, an expert document assistant. ${scopeHint}
+If the answer cannot be found in the context, clearly state that you don't know based on the documents, but do NOT make up information.
+Always reference your sources by using [Source X] where appropriate in your text.
 
 CONTEXT:
 ${formattedContext}
