@@ -3,20 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// Load environment variables FIRST before any other imports
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
+import OpenAI from 'openai';
 
 import { Database } from './server/db.ts';
 import { extractPageWiseText, chunkPageWiseText } from './server/pdf.ts';
-import { generateEmbeddings, buildRAGPrompt, ai } from './server/gemini.ts';
+import { generateEmbeddings, buildRAGPrompt, getAI } from './server/gemini.ts';
 import { User, DocumentRecord, TextChunk, VectorRecord, ChatSession, Message } from './src/types.ts';
-
-// Load environment variables
-dotenv.config();
 
 const PORT = 3000;
 const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET || 'chatpdf-access-secret-2026-key';
@@ -509,16 +510,16 @@ async function startServer() {
 
       // 5. Gather chat history if session is active
       let targetSessionId = sessionId;
-      const conversationContents: any[] = [];
+      const conversationMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [];
 
       if (targetSessionId) {
         const session = Database.getChatSession(targetSessionId);
         if (session && session.userId === userId) {
           const pastMessages = Database.getMessages(targetSessionId).slice(-10); // last 10 messages for context
           for (const msg of pastMessages) {
-            conversationContents.push({
-              role: msg.role === 'user' ? 'user' : 'model',
-              parts: [{ text: msg.content }],
+            conversationMessages.push({
+              role: msg.role === 'user' ? 'user' : 'assistant',
+              content: msg.content,
             });
           }
         }
@@ -539,9 +540,9 @@ async function startServer() {
       }
 
       // Append current context and prompt
-      conversationContents.push({
+      conversationMessages.push({
         role: 'user',
-        parts: [{ text: prompt }],
+        content: prompt,
       });
 
       // Save user question message
@@ -554,17 +555,19 @@ async function startServer() {
       };
       Database.createMessage(userMessage);
 
-      // 6. Call Gemini 3.5 Flash Streaming API
-      console.log(`[RAG Stream] Querying Gemini model for response on session ${targetSessionId}...`);
-      const stream = await ai.models.generateContentStream({
-        model: 'gemini-3.5-flash',
-        contents: conversationContents,
+      // 6. Call OpenAI GPT-4 Streaming API
+      console.log(`[RAG Stream] Querying OpenAI model for response on session ${targetSessionId}...`);
+      const client = getAI();
+      const stream = await client.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: conversationMessages,
+        stream: true,
       });
 
       let fullAnswerText = '';
 
       for await (const chunk of stream) {
-        const chunkText = chunk.text || '';
+        const chunkText = chunk.choices[0]?.delta?.content || '';
         fullAnswerText += chunkText;
         // Stream text chunk as an SSE event
         res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);

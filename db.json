@@ -7,8 +7,152 @@
       "createdAt": "2026-07-09T06:02:32.371Z"
     }
   ],
-  "documents": [],
-  "chunks": [],
-  "chatSessions": [],
-  "messages": []
+  "documents": [
+    {
+      "id": "doc-1783577761293-i1oiiky",
+      "userId": "user-1783576952371-8hy4r02",
+      "name": "Resume.6.pdf",
+      "size": 58014,
+      "pageCount": 1,
+      "uploadedAt": "2026-07-09T06:16:04.640Z"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "doc-1783577761293-i1oiiky-chunk-0",
+      "documentId": "doc-1783577761293-i1oiiky",
+      "text": "Summary Work Experience Education SkillS Interest Parameshwar Reddy Full Stack Web Developer Full Stack Developer with proven experience in building scalable web applications and dynamic user experiences using modern technologies. Adept at managing both frontend and backend development, integrating APIs, and optimizing performance. Passionate about delivering clean, efficient code and innovative digital solutions. CSS Design Web Applications Jawaharlal Nehru Technological University College of Engineering Full Stack Developer --- Talent Spotify Frontend Developer --- Digiotai Languages Material.ui JavaScript Gaming Problem-solving puzzles or Chess TypeScript 2022 - 2026 May2025-sep2025 Jan2025-Apr2025 HTML B.Tech --- Pulivendula Implemented responsive designs, enhancing mobile user experience Built interactive and dynamic UI components with React.js and Material UI Uses API integration and asynchronous handling (fetch, axios) efficiently Collaborates with backend teams for end-to-end",
+      "pageNumber": 1,
+      "index": 0
+    },
+    {
+      "id": "doc-1783577761293-i1oiiky-chunk-1",
+      "documentId": "doc-1783577761293-i1oiiky",
+      "text": "Built interactive and dynamic UI components with React.js and Material UI Uses API integration and asynchronous handling (fetch, axios) efficiently Collaborates with backend teams for end-to-end feature development Worked on fixing UI bugs and improving overall page speed for better user experience. Telugu Integrated third-party APIs, expanding application functionality. Developed scalable web applications, boosting user engagement by 30% Worked with authentication and authorization for secure user access. English Node.js Reac.js Next.js gurakaparameshwerreddy@gmail.com 8008879645 github.com/paramesh-reddy MongoDB GenAi Python Fast Api Sri Chaitanya Junior College Inter ---- Kurnool 2020 - 2022",
+      "pageNumber": 1,
+      "index": 1
+    }
+  ],
+  "chatSessions": [
+    {
+      "id": "session-1783577773709-maftnl0",
+      "userId": "user-1783576952371-8hy4r02",
+      "documentId": "doc-1783577761293-i1oiiky",
+      "title": "Summarize this document in 3 b...",
+      "createdAt": "2026-07-09T06:16:13.709Z"
+    },
+    {
+      "id": "session-1783577796140-qfv0k2w",
+      "userId": "user-1783576952371-8hy4r02",
+      "documentId": "doc-1783577761293-i1oiiky",
+      "title": "give  me two pint ",
+      "createdAt": "2026-07-09T06:16:36.140Z"
+    },
+    {
+      "id": "session-1783577810575-tneixws",
+      "userId": "user-1783576952371-8hy4r02",
+      "documentId": "doc-1783577761293-i1oiiky",
+      "title": "Explain any complex vocabulary...",
+      "createdAt": "2026-07-09T06:16:50.575Z"
+    },
+    {
+      "id": "session-1783578017155-w0eo5ao",
+      "userId": "user-1783576952371-8hy4r02",
+      "documentId": "doc-1783577761293-i1oiiky",
+      "title": "Summarize this document in 3 b...",
+      "createdAt": "2026-07-09T06:20:17.156Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-1783577773714-user",
+      "sessionId": "session-1783577773709-maftnl0",
+      "role": "user",
+      "content": "Summarize this document in 3 bullet points.",
+      "createdAt": "2026-07-09T06:16:13.714Z"
+    },
+    {
+      "id": "msg-1783577777543-assistant",
+      "sessionId": "session-1783577773709-maftnl0",
+      "role": "assistant",
+      "content": "- Parameshwar Reddy is a Full Stack Web Developer with experience in building scalable web applications, using modern technologies like React.js, Node.js, and Material UI, as well as integrating APIs and optimizing performance.\n- He has a proven track record of improving user engagement by 30% through UI bug fixes and enhancements, and he collaborates with backend teams for comprehensive feature development and secure user access management.\n- Reddy is pursuing a B.Tech degree at Jawaharlal Nehru Technological University and has a passion for delivering efficient code and innovative digital solutions, with interests in gaming and problem-solving.",
+      "createdAt": "2026-07-09T06:16:17.543Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 33
+    },
+    {
+      "id": "msg-1783577796144-user",
+      "sessionId": "session-1783577796140-qfv0k2w",
+      "role": "user",
+      "content": "give  me two pint ",
+      "createdAt": "2026-07-09T06:16:36.144Z"
+    },
+    {
+      "id": "msg-1783577797426-assistant",
+      "sessionId": "session-1783577796140-qfv0k2w",
+      "role": "assistant",
+      "content": "I don't know based on the document.",
+      "createdAt": "2026-07-09T06:16:37.426Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 16
+    },
+    {
+      "id": "msg-1783577810579-user",
+      "sessionId": "session-1783577810575-tneixws",
+      "role": "user",
+      "content": "Explain any complex vocabulary or theories here.",
+      "createdAt": "2026-07-09T06:16:50.579Z"
+    },
+    {
+      "id": "msg-1783577812472-assistant",
+      "sessionId": "session-1783577810575-tneixws",
+      "role": "assistant",
+      "content": "I'm sorry, but the provided context does not include any specific complex vocabulary or theories that would require explanation. If you have particular terms or concepts in mind, please let me know!",
+      "createdAt": "2026-07-09T06:16:52.472Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 28
+    },
+    {
+      "id": "msg-1783578017162-user",
+      "sessionId": "session-1783578017155-w0eo5ao",
+      "role": "user",
+      "content": "Summarize this document in 3 bullet points.",
+      "createdAt": "2026-07-09T06:20:17.162Z"
+    },
+    {
+      "id": "msg-1783578019226-assistant",
+      "sessionId": "session-1783578017155-w0eo5ao",
+      "role": "assistant",
+      "content": "- Parameshwar Reddy is a Full Stack Web Developer with experience in building scalable web applications, specializing in frontend and backend development using technologies like React.js, Material UI, and Node.js, along with integrating APIs and improving performance. \n\n- He has a proven track record of enhancing user engagement through web applications and is adept at fixing UI bugs, optimizing page speed, and implementing authentication for secure user access.\n\n- Currently pursuing a B.Tech at Jawaharlal Nehru Technological University, he has a keen interest in problem-solving, gaming, and creating responsive designs to improve mobile user experience.",
+      "createdAt": "2026-07-09T06:20:19.226Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 33
+    },
+    {
+      "id": "msg-1783578028367-user",
+      "sessionId": "session-1783578017155-w0eo5ao",
+      "role": "user",
+      "content": "give me 2 points the about that pdf ",
+      "createdAt": "2026-07-09T06:20:28.367Z"
+    },
+    {
+      "id": "msg-1783578030268-assistant",
+      "sessionId": "session-1783578017155-w0eo5ao",
+      "role": "assistant",
+      "content": "1. Parameshwar Reddy is a Full Stack Web Developer experienced in creating scalable web applications and dynamic user interfaces, utilizing technologies such as React.js, Material UI, Node.js, and integrating APIs to enhance functionality and performance [Source 1].\n\n2. He has a strong focus on improving user engagement, having achieved a 30% increase through his work, and is pursuing a B.Tech at Jawaharlal Nehru Technological University while also being passionate about problem-solving and gaming [Source 2].",
+      "createdAt": "2026-07-09T06:20:30.268Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 22
+    }
+  ]
 }

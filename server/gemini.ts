@@ -3,26 +3,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GoogleGenAI } from '@google/genai';
+import OpenAI from 'openai';
 
-// Initialize Gemini SDK with telemetry header as required by the system instructions
-export const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    },
-  },
-});
+// Lazy-initialize OpenAI SDK to ensure environment variables are loaded
+let aiInstance: OpenAI | null = null;
+
+export function getAI(): OpenAI {
+  if (!aiInstance) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY is not defined in the environment.');
+    }
+    aiInstance = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return aiInstance;
+}
+
+export const ai = { models: { generateContentStream: () => {} } }; // placeholder for imports
 
 /**
- * Generates embeddings for an array of text chunks using gemini-embedding-2-preview.
+ * Generates embeddings for an array of text chunks using OpenAI's text-embedding-3-small.
  * Implements batching to ensure stability for larger PDF documents.
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY is not defined in the environment.');
-  }
+  const client = getAI();
 
   const batchSize = 20;
   const promises: Promise<number[][]>[] = [];
@@ -31,15 +36,15 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
     const batch = texts.slice(i, i + batchSize);
     promises.push((async () => {
       try {
-        const response = await ai.models.embedContent({
-          model: 'gemini-embedding-2-preview',
-          contents: batch,
+        const response = await client.embeddings.create({
+          model: 'text-embedding-3-small',
+          input: batch,
         });
 
-        if (response.embeddings) {
-          return response.embeddings.map((e) => e.values);
+        if (response.data) {
+          return response.data.map((e) => e.embedding);
         } else {
-          throw new Error('Embeddings response did not contain values');
+          throw new Error('Embeddings response did not contain data');
         }
       } catch (error) {
         console.error(`Error generating embeddings batch starting at index ${i}:`, error);
