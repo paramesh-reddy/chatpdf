@@ -25,6 +25,7 @@ export interface DocumentRecord {
   pageCount: number;
   uploadedAt: string;
   metadata?: Record<string, any>;
+  fileType?: string;
   isStarred?: boolean;
   tags?: string[];
 }

@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -168,13 +169,14 @@ export function createApp() {
 
       const buffer = Buffer.from(base64Data, 'base64');
       const tempPdfPath = path.join(process.cwd(), 'tmp-upload.pdf');
-      require('fs').writeFileSync(tempPdfPath, buffer);
-
-      const extractedText = await extractPageWiseText(tempPdfPath);
-      const chunks = chunkPageWiseText(extractedText);
-      const embeddings = await generateEmbeddings(chunks.map(chunk => chunk.text));
+      fs.writeFileSync(tempPdfPath, buffer);
 
       const docId = `doc-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      const extractedText = await extractPageWiseText(buffer);
+      const chunks = chunkPageWiseText(extractedText, docId);
+      const embeddings = await generateEmbeddings(chunks.map(chunk => chunk.text));
+      const pageCount = Object.keys(extractedText).length;
+
       const newDoc: DocumentRecord = {
         id: docId,
         userId: req.user!.id,
@@ -182,6 +184,7 @@ export function createApp() {
         fileType: 'application/pdf',
         uploadedAt: new Date().toISOString(),
         size: fileSize || buffer.length,
+        pageCount,
         isStarred: false,
         tags: [],
       };
@@ -295,7 +298,6 @@ export function createApp() {
         res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`);
       }
 
-      const sourcePages = Array.from(new Set(topChunks.map(c => c.pageNumber))).sort((a, b) => a - b);
       const assistantMessage: Message = { id: `msg-${Date.now()}-assistant`, sessionId: targetSessionId, role: 'assistant', content: fullAnswerText, createdAt: new Date().toISOString(), sourcePages, confidenceScore };
       Database.createMessage(assistantMessage);
 
