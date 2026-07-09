@@ -14,7 +14,10 @@
       "name": "Resume.6.pdf",
       "size": 58014,
       "pageCount": 1,
-      "uploadedAt": "2026-07-09T06:16:04.640Z"
+      "uploadedAt": "2026-07-09T06:16:04.640Z",
+      "tags": [
+        "Research"
+      ]
     }
   ],
   "chunks": [
@@ -61,6 +64,13 @@
       "documentId": "doc-1783577761293-i1oiiky",
       "title": "Summarize this document in 3 b...",
       "createdAt": "2026-07-09T06:20:17.156Z"
+    },
+    {
+      "id": "session-1783578160576-1sxup0p",
+      "userId": "user-1783576952371-8hy4r02",
+      "documentId": "doc-1783577761293-i1oiiky",
+      "title": "tell me about that ",
+      "createdAt": "2026-07-09T06:22:40.576Z"
     }
   ],
   "messages": [
@@ -153,6 +163,42 @@
         1
       ],
       "confidenceScore": 22
+    },
+    {
+      "id": "msg-1783578160579-user",
+      "sessionId": "session-1783578160576-1sxup0p",
+      "role": "user",
+      "content": "tell me about that ",
+      "createdAt": "2026-07-09T06:22:40.579Z"
+    },
+    {
+      "id": "msg-1783578162556-assistant",
+      "sessionId": "session-1783578160576-1sxup0p",
+      "role": "assistant",
+      "content": "I don't know based on the document. Please provide more specific information or context for me to assist you better.",
+      "createdAt": "2026-07-09T06:22:42.556Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 25
+    },
+    {
+      "id": "msg-1783578179427-user",
+      "sessionId": "session-1783578160576-1sxup0p",
+      "role": "user",
+      "content": "wta happending giv erespone",
+      "createdAt": "2026-07-09T06:22:59.427Z"
+    },
+    {
+      "id": "msg-1783578180838-assistant",
+      "sessionId": "session-1783578160576-1sxup0p",
+      "role": "assistant",
+      "content": "I don't know based on the document.",
+      "createdAt": "2026-07-09T06:23:00.838Z",
+      "sourcePages": [
+        1
+      ],
+      "confidenceScore": 28
     }
   ]
 }
