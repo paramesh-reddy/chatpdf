@@ -27,6 +27,13 @@
       "dest": "/api/index.ts"
     },
     {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)\\.(?:js|mjs|css|map|json|png|jpe?g|gif|svg|ico|webp|woff2?|ttf)$",
+      "status": 404
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }

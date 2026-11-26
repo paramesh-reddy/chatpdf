@@ -11,13 +11,6 @@ export interface User {
   createdAt: string;
 }
 
-export interface DocumentMetadata {
-  name: string;
-  size: number;
-  pageCount: number;
-  uploadedAt: string;
-}
-
 export interface DocumentRecord {
   id: string;
   userId: string;
@@ -79,10 +72,4 @@ export interface AuthResponse {
   };
   accessToken: string;
   refreshToken: string;
-}
-
-export interface ChatResponse {
-  answer: string;
-  source_pages: number[];
-  confidence_score: number;
 }
