@@ -9,7 +9,7 @@
       }
     },
     {
-      "src": "api/index.ts",
+      "src": "api/handler.cjs",
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
@@ -24,7 +24,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.ts"
+      "dest": "/api/handler.cjs"
     },
     {
       "handle": "filesystem"

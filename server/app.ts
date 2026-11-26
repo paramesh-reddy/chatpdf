@@ -96,7 +96,11 @@ export function createApp() {
       });
     } catch (error) {
       console.error('Registration error:', error);
-      res.status(500).json({ error: 'Internal server error during registration' });
+      const message = error instanceof Error ? error.message : '';
+      const safe = /DATABASE_URL/i.test(message)
+        ? 'Database is not configured. Add DATABASE_URL in the Vercel project settings and redeploy.'
+        : 'Internal server error during registration';
+      res.status(500).json({ error: safe });
     }
   });
 

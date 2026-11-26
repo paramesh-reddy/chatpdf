@@ -11,17 +11,41 @@ dotenv.config();
 
 const { Pool } = pg;
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : undefined,
-});
+let pool: InstanceType<typeof Pool> | null = null;
+
+function databaseUrl(): string {
+  const raw = process.env.DATABASE_URL;
+  if (!raw) {
+    throw new Error('DATABASE_URL is not defined in the environment.');
+  }
+  try {
+    const url = new URL(raw);
+    // channel_binding and sslmode=require (pg 8 treats it as verify-full) both
+    // break node-postgres on Vercel. SSL is set on the pool instead.
+    url.searchParams.delete('channel_binding');
+    url.searchParams.delete('sslmode');
+    return url.toString();
+  } catch {
+    return raw;
+  }
+}
+
+function getPool(): InstanceType<typeof Pool> {
+  if (!pool) {
+    pool = new Pool({
+      connectionString: databaseUrl(),
+      ssl: { rejectUnauthorized: false },
+    });
+    pool.on('error', (error) => {
+      console.error('Postgres pool error:', error);
+    });
+  }
+  return pool;
+}
 
 let ready: Promise<void> | null = null;
 
 async function ensureReady(): Promise<void> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not defined in the environment.');
-  }
   if (!ready) {
     ready = initSchema().catch((error) => {
       ready = null;
@@ -32,7 +56,7 @@ async function ensureReady(): Promise<void> {
 }
 
 async function initSchema(): Promise<void> {
-  await pool.query(`
+  await getPool().query(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
@@ -156,25 +180,25 @@ function mapMessage(row: any): Message {
 export class Database {
   public static async getUsers(): Promise<User[]> {
     await ensureReady();
-    const { rows } = await pool.query('SELECT * FROM users ORDER BY created_at ASC');
+    const { rows } = await getPool().query('SELECT * FROM users ORDER BY created_at ASC');
     return rows.map(mapUser);
   }
 
   public static async getUserByEmail(email: string): Promise<User | undefined> {
     await ensureReady();
-    const { rows } = await pool.query('SELECT * FROM users WHERE lower(email) = lower($1) LIMIT 1', [email]);
+    const { rows } = await getPool().query('SELECT * FROM users WHERE lower(email) = lower($1) LIMIT 1', [email]);
     return rows[0] ? mapUser(rows[0]) : undefined;
   }
 
   public static async getUserById(id: string): Promise<User | undefined> {
     await ensureReady();
-    const { rows } = await pool.query('SELECT * FROM users WHERE id = $1 LIMIT 1', [id]);
+    const { rows } = await getPool().query('SELECT * FROM users WHERE id = $1 LIMIT 1', [id]);
     return rows[0] ? mapUser(rows[0]) : undefined;
   }
 
   public static async createUser(user: User): Promise<User> {
     await ensureReady();
-    await pool.query(
+    await getPool().query(
       `INSERT INTO users (id, email, password_hash, display_name, created_at)
        VALUES ($1, $2, $3, $4, $5)`,
       [user.id, user.email, user.passwordHash, user.displayName ?? null, user.createdAt]
@@ -184,7 +208,7 @@ export class Database {
 
   public static async getDocuments(userId: string): Promise<DocumentRecord[]> {
     await ensureReady();
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       'SELECT * FROM documents WHERE user_id = $1 ORDER BY uploaded_at DESC',
       [userId]
     );
@@ -193,7 +217,7 @@ export class Database {
 
   public static async getDocument(id: string): Promise<DocumentRecord | undefined> {
     await ensureReady();
-    const { rows } = await pool.query('SELECT * FROM documents WHERE id = $1 LIMIT 1', [id]);
+    const { rows } = await getPool().query('SELECT * FROM documents WHERE id = $1 LIMIT 1', [id]);
     return rows[0] ? mapDocument(rows[0]) : undefined;
   }
 
@@ -203,7 +227,7 @@ export class Database {
     vectors: VectorRecord[]
   ): Promise<DocumentRecord> {
     await ensureReady();
-    const client = await pool.connect();
+    const client = await getPool().connect();
     try {
       await client.query('BEGIN');
       await client.query(
@@ -248,7 +272,7 @@ export class Database {
 
   public static async deleteDocument(id: string): Promise<void> {
     await ensureReady();
-    const client = await pool.connect();
+    const client = await getPool().connect();
     try {
       await client.query('BEGIN');
       const sessions = await client.query('SELECT id FROM chat_sessions WHERE document_id = $1', [id]);
@@ -269,7 +293,7 @@ export class Database {
 
   public static async getChunks(documentId: string): Promise<TextChunk[]> {
     await ensureReady();
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       'SELECT * FROM chunks WHERE document_id = $1 ORDER BY chunk_index ASC',
       [documentId]
     );
@@ -278,7 +302,7 @@ export class Database {
 
   public static async toggleDocumentStar(id: string): Promise<DocumentRecord | undefined> {
     await ensureReady();
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       `UPDATE documents SET is_starred = NOT is_starred WHERE id = $1 RETURNING *`,
       [id]
     );
@@ -287,7 +311,7 @@ export class Database {
 
   public static async updateDocumentTags(id: string, tags: string[]): Promise<DocumentRecord | undefined> {
     await ensureReady();
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       `UPDATE documents SET tags = $2::jsonb WHERE id = $1 RETURNING *`,
       [id, JSON.stringify(tags)]
     );
@@ -296,7 +320,7 @@ export class Database {
 
   public static async getChatSessions(userId: string): Promise<ChatSession[]> {
     await ensureReady();
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       'SELECT * FROM chat_sessions WHERE user_id = $1 ORDER BY created_at DESC',
       [userId]
     );
@@ -305,7 +329,7 @@ export class Database {
 
   public static async getChatSessionsByDoc(userId: string, documentId: string): Promise<ChatSession[]> {
     await ensureReady();
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       'SELECT * FROM chat_sessions WHERE user_id = $1 AND document_id = $2 ORDER BY created_at DESC',
       [userId, documentId]
     );
@@ -314,13 +338,13 @@ export class Database {
 
   public static async getChatSession(id: string): Promise<ChatSession | undefined> {
     await ensureReady();
-    const { rows } = await pool.query('SELECT * FROM chat_sessions WHERE id = $1 LIMIT 1', [id]);
+    const { rows } = await getPool().query('SELECT * FROM chat_sessions WHERE id = $1 LIMIT 1', [id]);
     return rows[0] ? mapSession(rows[0]) : undefined;
   }
 
   public static async createChatSession(session: ChatSession): Promise<ChatSession> {
     await ensureReady();
-    await pool.query(
+    await getPool().query(
       `INSERT INTO chat_sessions (id, user_id, document_id, document_ids, title, created_at)
        VALUES ($1, $2, $3, $4::jsonb, $5, $6)`,
       [
@@ -337,7 +361,7 @@ export class Database {
 
   public static async getMessages(sessionId: string): Promise<Message[]> {
     await ensureReady();
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       'SELECT * FROM messages WHERE session_id = $1 ORDER BY created_at ASC',
       [sessionId]
     );
@@ -346,7 +370,7 @@ export class Database {
 
   public static async createMessage(message: Message): Promise<Message> {
     await ensureReady();
-    await pool.query(
+    await getPool().query(
       `INSERT INTO messages (id, session_id, role, content, created_at, source_pages, source_documents, confidence_score)
        VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8)`,
       [
@@ -394,7 +418,7 @@ export class Database {
     await ensureReady();
     if (documentIds.length === 0) return [];
 
-    const { rows } = await pool.query(
+    const { rows } = await getPool().query(
       `SELECT c.id, c.document_id, c.text, c.page_number, c.chunk_index,
               v.values, d.name AS document_name
        FROM vectors v

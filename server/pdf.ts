@@ -4,14 +4,19 @@
  */
 
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import { RecursiveCharacterTextSplitter } from './splitter.ts';
 import { TextChunk } from '../src/types.ts';
 
-const nodeRequire = createRequire(import.meta.url);
-
-// Literal requires so the Vercel file tracer ships the native canvas build.
-// pdfjs-dist reads DOMMatrix while its module is evaluated; Node does not provide it.
+// Loaded only while parsing a PDF. Requiring the native canvas build at startup
+// crashes the Vercel function for every route, including register and login.
 function preloadCanvas(): void {
+  let nodeRequire: NodeRequire;
+  try {
+    nodeRequire = createRequire(path.join(process.cwd(), 'package.json'));
+  } catch {
+    return;
+  }
   try {
     nodeRequire('@napi-rs/canvas');
   } catch (error) {
@@ -23,8 +28,6 @@ function preloadCanvas(): void {
     // Installed for the Vercel Linux runtime. It cannot load on other operating systems.
   }
 }
-
-preloadCanvas();
 
 type PdfRuntime = {
   PDFParse: typeof import('pdf-parse').PDFParse;
@@ -99,6 +102,7 @@ function installDomPolyfills(): void {
 async function loadPdfRuntime(): Promise<PdfRuntime> {
   if (!runtimePromise) {
     runtimePromise = (async () => {
+      preloadCanvas();
       installDomPolyfills();
       let CanvasFactory: PdfRuntime['CanvasFactory'];
       try {
